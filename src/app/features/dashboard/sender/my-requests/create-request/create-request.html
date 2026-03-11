@@ -1,0 +1,293 @@
+<div class="create-request-page animate-fade-in">
+
+  <!-- ── Header ── -->
+  <div class="page-header animate-fade-up">
+    <a routerLink="/dashboard/sender/requests" class="back-btn">← Back to requests</a>
+    <h1 class="page-title">Post a New Request</h1>
+    <p class="page-subtitle">Tell us where you need your bag to go and we'll find you a transporter.</p>
+  </div>
+
+  <!-- ── Success state ── -->
+  @if (submitted()) {
+    <div class="success-card animate-scale-in">
+      <div class="sc-icon">🎉</div>
+      <h2>Request posted!</h2>
+      <p>Transporters will start making offers soon. Redirecting to your request…</p>
+      <div class="sc-loader"></div>
+    </div>
+  } @else {
+
+  <!-- ── Step progress ── -->
+  <div class="step-progress animate-fade-up delay-100">
+    @for (s of steps; track s.num) {
+      <div class="sp-item" [class.active]="step() === s.num" [class.done]="step() > s.num">
+        <div class="sp-circle">
+          @if (step() > s.num) { ✓ } @else { {{ s.icon }} }
+        </div>
+        <span class="sp-label">{{ s.label }}</span>
+      </div>
+      @if (!$last) {
+        <div class="sp-connector" [class.done]="step() > s.num"></div>
+      }
+    }
+  </div>
+
+  <!-- ── Form ── -->
+  <div class="form-card animate-fade-up delay-200">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+      <!-- ══ STEP 1 — Route ══ -->
+      @if (step() === 1) {
+        <div class="step-content animate-fade-up">
+          <h3 class="step-title">📍 Where is it going?</h3>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label>Departure city</label>
+              <div class="select-wrap">
+                <span class="select-icon">🚀</span>
+                <select formControlName="departureCity"
+                  [class.invalid]="f['departureCity'].invalid && f['departureCity'].touched">
+                  <option value="" disabled selected>Select city...</option>
+                  @for (city of cities; track city) {
+                    <option [value]="city">{{ city }}</option>
+                  }
+                </select>
+              </div>
+              @if (f['departureCity'].invalid && f['departureCity'].touched) {
+                <span class="error-msg">Please select a departure city.</span>
+              }
+            </div>
+
+            <div class="form-field">
+              <label>Arrival city</label>
+              <div class="select-wrap">
+                <span class="select-icon">🏁</span>
+                <select formControlName="arrivalCity"
+                  [class.invalid]="f['arrivalCity'].invalid && f['arrivalCity'].touched">
+                  <option value="" disabled selected>Select city...</option>
+                  @for (city of cities; track city) {
+                    <option [value]="city">{{ city }}</option>
+                  }
+                </select>
+              </div>
+              @if (f['arrivalCity'].invalid && f['arrivalCity'].touched) {
+                <span class="error-msg">Please select an arrival city.</span>
+              }
+            </div>
+          </div>
+
+          @if (sameCityError()) {
+            <div class="alert-warn">⚠️ Departure and arrival cities must be different.</div>
+          }
+
+          <div class="form-field">
+            <label>Desired shipping date</label>
+            <div class="input-wrap">
+              <span class="input-icon">📅</span>
+              <input type="date" formControlName="desiredDate" [min]="today"
+                [class.invalid]="f['desiredDate'].invalid && f['desiredDate'].touched" />
+            </div>
+            @if (f['desiredDate'].invalid && f['desiredDate'].touched) {
+              <span class="error-msg">Please select a date.</span>
+            }
+          </div>
+
+          <!-- Route preview -->
+          @if (f['departureCity'].value && f['arrivalCity'].value && !sameCityError()) {
+            <div class="route-preview animate-scale-in">
+              <div class="rp-city">
+                <div class="rp-dot rp-dot--from"></div>
+                <span>{{ f['departureCity'].value }}</span>
+              </div>
+              <div class="rp-path">→</div>
+              <div class="rp-city">
+                <div class="rp-dot rp-dot--to"></div>
+                <span>{{ f['arrivalCity'].value }}</span>
+              </div>
+            </div>
+          }
+
+          <div class="step-actions">
+            <button
+              type="button"
+              class="btn btn-primary"
+              [disabled]="!step1Valid"
+              (click)="nextStep()"
+            >
+              Continue to baggage info →
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- ══ STEP 2 — Baggage ══ -->
+      @if (step() === 2) {
+        <div class="step-content animate-fade-up">
+          <h3 class="step-title">📦 Tell us about your baggage</h3>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label>Weight (kg)</label>
+              <div class="input-wrap">
+                <span class="input-icon">⚖️</span>
+                <input type="number" formControlName="weightKg" placeholder="e.g. 5"
+                  min="0.5" max="100" step="0.5"
+                  [class.invalid]="f['weightKg'].invalid && f['weightKg'].touched"
+                  [class.valid]="f['weightKg'].valid" />
+              </div>
+              @if (f['weightKg'].invalid && f['weightKg'].touched) {
+                <span class="error-msg">Enter a weight between 0.5 and 100 kg.</span>
+              }
+            </div>
+
+            <div class="form-field">
+              <label>
+                Proposed price (MAD)
+                @if (suggestPrice() > 0) {
+                  <button type="button" class="suggest-btn" (click)="applySuggestion()">
+                    💡 Suggest {{ suggestPrice() }} MAD
+                  </button>
+                }
+              </label>
+              <div class="input-wrap">
+                <span class="input-icon">💰</span>
+                <input type="number" formControlName="proposedPrice" placeholder="e.g. 120"
+                  min="1"
+                  [class.invalid]="f['proposedPrice'].invalid && f['proposedPrice'].touched"
+                  [class.valid]="f['proposedPrice'].valid" />
+              </div>
+              @if (f['proposedPrice'].invalid && f['proposedPrice'].touched) {
+                <span class="error-msg">Enter a price greater than 0.</span>
+              }
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label>Description <span class="char-count">{{ f['description'].value?.length ?? 0 }}/300</span></label>
+            <textarea
+              formControlName="description"
+              placeholder="Describe your baggage — what's inside, any special care needed..."
+              rows="4"
+              maxlength="300"
+              [class.invalid]="f['description'].invalid && f['description'].touched"
+              [class.valid]="f['description'].valid"
+            ></textarea>
+            @if (f['description'].invalid && f['description'].touched) {
+              <span class="error-msg">Description must be at least 10 characters.</span>
+            }
+          </div>
+
+          <div class="fragile-toggle">
+            <label class="toggle-label">
+              <input type="checkbox" formControlName="isFragile" class="toggle-checkbox" />
+              <div class="toggle-switch"></div>
+              <span>🔮 Mark as fragile / handle with care</span>
+            </label>
+          </div>
+
+          <div class="step-actions">
+            <button type="button" class="btn btn-outline" (click)="prevStep()">← Back</button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              [disabled]="!step2Valid"
+              (click)="nextStep()"
+            >
+              Review & Post →
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- ══ STEP 3 — Review ══ -->
+      @if (step() === 3) {
+        <div class="step-content animate-fade-up">
+          <h3 class="step-title">✅ Review your request</h3>
+
+          <div class="review-card">
+            <!-- Route -->
+            <div class="review-route">
+              <div class="review-city">
+                <div class="rp-dot rp-dot--from"></div>
+                <div>
+                  <div class="review-city-label">From</div>
+                  <div class="review-city-name">{{ f['departureCity'].value }}</div>
+                </div>
+              </div>
+              <div class="review-arrow">→</div>
+              <div class="review-city">
+                <div class="rp-dot rp-dot--to"></div>
+                <div>
+                  <div class="review-city-label">To</div>
+                  <div class="review-city-name">{{ f['arrivalCity'].value }}</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="review-divider"></div>
+
+            <!-- Details grid -->
+            <div class="review-grid">
+              <div class="review-item">
+                <span class="ri-icon">📅</span>
+                <div>
+                  <div class="ri-label">Desired date</div>
+                  <div class="ri-val">{{ f['desiredDate'].value }}</div>
+                </div>
+              </div>
+              <div class="review-item">
+                <span class="ri-icon">⚖️</span>
+                <div>
+                  <div class="ri-label">Weight</div>
+                  <div class="ri-val">{{ f['weightKg'].value }} kg</div>
+                </div>
+              </div>
+              <div class="review-item">
+                <span class="ri-icon">💰</span>
+                <div>
+                  <div class="ri-label">Your price</div>
+                  <div class="ri-val ri-price">{{ f['proposedPrice'].value }} MAD</div>
+                </div>
+              </div>
+              <div class="review-item">
+                <span class="ri-icon">🔮</span>
+                <div>
+                  <div class="ri-label">Fragile</div>
+                  <div class="ri-val">{{ f['isFragile'].value ? 'Yes — handle with care' : 'No' }}</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="review-divider"></div>
+
+            <div class="review-desc">
+              <div class="ri-label">Description</div>
+              <p>{{ f['description'].value }}</p>
+            </div>
+          </div>
+
+          <div class="step-actions">
+            <button type="button" class="btn btn-outline" (click)="prevStep()">← Edit</button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="loading()"
+            >
+              @if (loading()) {
+                <span class="btn-spinner-sm"></span>
+                Posting…
+              } @else {
+                🚀 Post Request
+              }
+            </button>
+          </div>
+        </div>
+      }
+
+    </form>
+  </div>
+
+  } <!-- end !submitted -->
+
+</div>

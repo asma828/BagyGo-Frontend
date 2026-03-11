@@ -1,0 +1,84 @@
+.avatar {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  flex-shrink: 0;
+  overflow: visible;
+
+  // ── Sizes ───────────────────────────────────────────────
+  &--xs  { width: 24px;  height: 24px;  }
+  &--sm  { width: 32px;  height: 32px;  }
+  &--md  { width: 40px;  height: 40px;  }
+  &--lg  { width: 52px;  height: 52px;  }
+  &--xl  { width: 72px;  height: 72px;  }
+
+  // ── Initials ─────────────────────────────────────────────
+  &__initials {
+    font-family: var(--font-display);
+    font-weight: 900;
+    color: white;
+    line-height: 1;
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 0.5px;
+  }
+
+  &--xs  .avatar__initials { font-size: 9px;  }
+  &--sm  .avatar__initials { font-size: 11px; }
+  &--md  .avatar__initials { font-size: 14px; }
+  &--lg  .avatar__initials { font-size: 18px; }
+  &--xl  .avatar__initials { font-size: 26px; }
+
+  // ── Image ────────────────────────────────────────────────
+  &__img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  // ── Online dot ───────────────────────────────────────────
+  &__dot {
+    position: absolute;
+    bottom: 1px;
+    right: 1px;
+    width: 10px;
+    height: 10px;
+    background: var(--success);
+    border-radius: 50%;
+    border: 2px solid var(--white);
+  }
+
+  &--xs .avatar__dot { width: 7px; height: 7px; bottom: 0; right: 0; }
+  &--sm .avatar__dot { width: 8px; height: 8px; }
+  &--lg .avatar__dot { width: 13px; height: 13px; }
+  &--xl .avatar__dot { width: 16px; height: 16px; }
+
+  // ── Rating badge ─────────────────────────────────────────
+  &__rating {
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: var(--dark);
+    font-size: 10px;
+    font-weight: 800;
+    padding: 1px 6px;
+    border-radius: var(--radius-full);
+    border: 2px solid var(--white);
+    white-space: nowrap;
+    font-family: var(--font-display);
+  }
+
+  // ── Online ring ──────────────────────────────────────────
+  &--online {
+    box-shadow: 0 0 0 2px var(--white), 0 0 0 4px var(--success);
+  }
+}

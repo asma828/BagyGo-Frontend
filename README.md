@@ -57,3 +57,84 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+
+
+
+
+bagygo-frontend/src/
+├── index.html
+├── main.ts
+├── styles.scss                          ✅ done
+│
+└── app/
+    ├── app.ts                           ✅ done
+    ├── app.config.ts                    ✅ done
+    ├── app.routes.ts                    ✅ done
+    │
+    ├── core/                            — singleton services, used app-wide
+    │   ├── models/
+    │   │   └── index.ts                 ✅ done (all interfaces & types)
+    │   ├── services/
+    │   │   ├── auth.service.ts          ✅ done
+    │   │   ├── baggage-request.service.ts   ⬜ to build
+    │   │   ├── trip.service.ts              ⬜ to build
+    │   │   ├── offer.service.ts             ⬜ to build
+    │   │   ├── message.service.ts           ⬜ to build
+    │   │   └── rating.service.ts            ⬜ to build
+    │   ├── guards/
+    │   │   └── auth.guard.ts            ✅ done
+    │   └── interceptors/
+    │       └── auth.interceptor.ts      ✅ done
+    │
+    ├── shared/                          — reusable components used across features
+    │   └── components/
+    │       ├── navbar/                      ⬜ (landing page navbar)
+    │       ├── avatar/                      ⬜ (user avatar with initials)
+    │       ├── rating-stars/                ⬜ (star display/input)
+    │       ├── status-badge/                ⬜ (request/trip status chip)
+    │       └── confirm-dialog/              ⬜ (reusable modal)
+    │
+    └── features/                        — one folder per page/feature area
+        │
+        ├── landing/                         ⬜ to build
+        │   └── landing.component
+        │       (.ts / .html / .scss)
+        │
+        ├── auth/                        ✅ done
+        │   ├── auth-layout.component.ts
+        │   ├── login.component.*
+        │   └── register.component.*
+        │
+        └── dashboard/
+            ├── dashboard-layout.component.*  ✅ done
+            │
+            ├── sender/
+            │   ├── sender-home.component.*           ✅ done (sender-dashboard)
+            │   ├── /my-requests
+            │   │   ├── request-list.component.*       ⬜
+            │   │   ├── request-detail.component.*     ⬜
+            │   │   └── create-request.component.*     ⬜
+            │   └── browse-trips/
+            │       └── trip-list.component.*          ⬜
+            │
+            ├── transporter/
+            │   ├── transporter-home.component.*       ⬜
+            │   ├── my-trips/
+            │   │   ├── trip-list.component.*          ⬜
+            │   │   └── create-trip.component.*        ⬜
+            │   └── browse-requests/
+            │       ├── request-list.component.*       ⬜
+            │       └── offer-form.component.*         ⬜
+            │
+            ├── messages/
+            │   └── messages.component.*               ⬜
+            │
+            ├── tracking/
+            │   └── tracking.component.*               ⬜
+            │
+            ├── ratings/
+            │   └── ratings.component.*                ⬜
+            │
+            └── settings/
+                └── settings.component.*               ⬜

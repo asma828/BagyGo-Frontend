@@ -1,0 +1,178 @@
+@if (loading()) {
+  <div class="loading-screen">
+    <div class="spinner"></div>
+  </div>
+} @else {
+
+<div class="sender-dashboard animate-fade-in">
+
+  <!-- ── Page Header ──────────────────────────────────── -->
+  <div class="page-header animate-fade-up">
+    <div>
+      <h1 class="page-title">
+        {{ greeting() }}, <span class="highlight">{{ user?.firstName }}</span> 
+      </h1>
+      <p class="page-subtitle">Here's what's happening with your shipments today.</p>
+    </div>
+    <a routerLink="/dashboard/sender/requests/new" class="btn btn-primary">
+      <span>+</span> New Request
+    </a>
+  </div>
+
+  <!-- ── Stats Cards ──────────────────────────────────── -->
+  <div class="stats-grid animate-fade-up delay-100">
+
+    <div class="stat-card sc-orange">
+      <div class="sc-icon"></div>
+      <div class="sc-val">{{ stats().activeRequests }}</div>
+      <div class="sc-label">Active Requests</div>
+      <div class="sc-trend">↑ 2 this week</div>
+    </div>
+
+    <div class="stat-card sc-teal">
+      <div class="sc-icon"></div>
+      <div class="sc-val">{{ stats().offersReceived }}</div>
+      <div class="sc-label">Offers Received</div>
+      <div class="sc-trend">↑ 5 new today</div>
+    </div>
+
+    <div class="stat-card sc-yellow">
+      <div class="sc-icon"></div>
+      <div class="sc-val">{{ stats().delivered }}</div>
+      <div class="sc-label">Delivered</div>
+      <div class="sc-trend">All on time </div>
+    </div>
+
+    <div class="stat-card sc-dark">
+      <div class="sc-icon"></div>
+      <div class="sc-val">{{ stats().avgRating }}</div>
+      <div class="sc-label">Your Rating</div>
+      <div class="sc-trend">Top Sender </div>
+    </div>
+
+  </div>
+
+  <!-- ── Main Content Grid ────────────────────────────── -->
+  <div class="content-grid animate-fade-up delay-200">
+
+    <!-- Active Requests -->
+    <div class="panel panel-wide">
+      <div class="panel-header">
+        <h3 class="panel-title">Active Requests</h3>
+        <a routerLink="/dashboard/sender/requests" class="panel-link">View all →</a>
+      </div>
+
+      <div class="requests-list">
+        @for (req of activeRequests(); track req.id) {
+          <div class="request-row">
+            <div class="rr-route">
+              <div class="rr-cities">
+                <span class="rr-from">{{ req.departureCity }}</span>
+                <span class="rr-arrow">→</span>
+                <span class="rr-to">{{ req.arrivalCity }}</span>
+              </div>
+              <div class="rr-meta">
+                <span class="rr-chip"> {{ formatDate(req.desiredDate) }}</span>
+                <span class="rr-chip"> {{ req.weightKg }} kg</span>
+                @if (req.isFragile) { <span class="rr-chip chip-danger"> Fragile</span> }
+              </div>
+            </div>
+            <div class="rr-right">
+              <div class="rr-price">{{ req.proposedPrice }} <span>MAD</span></div>
+              <div class="rr-offers">{{ req.offersCount }} offer{{ req.offersCount !== 1 ? 's' : '' }}</div>
+              <span class="badge {{ getStatusClass(req.status) }}">
+                {{ getStatusLabel(req.status) }}
+              </span>
+            </div>
+          </div>
+        }
+
+        @empty {
+          <div class="empty-state">
+            <div class="es-icon">📭</div>
+            <div class="es-text">No active requests yet.</div>
+            <a routerLink="/dashboard/sender/requests/new" class="btn btn-primary btn-sm">
+              Post your first request →
+            </a>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Right column -->
+    <div class="right-column">
+
+      <!-- Progress panel -->
+      <div class="panel">
+        <div class="panel-header">
+          <h3 class="panel-title">Delivery Progress</h3>
+        </div>
+        <div class="progress-list">
+          @for (item of requestProgress(); track item.label) {
+            <div class="progress-item">
+              <div class="pi-header">
+                <span class="pi-label">{{ item.label }}</span>
+                <span class="pi-pct" [style.color]="item.color">{{ item.pct }}%</span>
+              </div>
+              <div class="pi-bar">
+                <div
+                  class="pi-fill"
+                  [style.width.%]="item.pct"
+                  [style.background]="'linear-gradient(90deg, ' + item.color + ', ' + item.color + '99)'"
+                ></div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Activity feed -->
+      <div class="panel">
+        <div class="panel-header">
+          <h3 class="panel-title">Recent Activity</h3>
+          <a href="#" class="panel-link">See all →</a>
+        </div>
+        <div class="activity-feed">
+          @for (item of recentActivity(); track item.id) {
+            <div class="activity-item">
+              <div class="ai-icon {{ getActivityClass(item.type) }}">{{ item.icon }}</div>
+              <div class="ai-body">
+                <div class="ai-title">{{ item.title }}</div>
+                <div class="ai-desc">{{ item.description }}</div>
+              </div>
+              <div class="ai-time">{{ item.timestamp }}</div>
+            </div>
+          }
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Quick Actions ────────────────────────────────── -->
+  <div class="quick-actions animate-fade-up delay-300">
+    <div class="qa-title">Quick Actions</div>
+    <div class="qa-grid">
+      <a routerLink="/dashboard/sender/requests/new" class="qa-card">
+        <span class="qa-icon"></span>
+        <span class="qa-label">New Request</span>
+      </a>
+      <a routerLink="/dashboard/sender/trips" class="qa-card">
+        <span class="qa-icon"></span>
+        <span class="qa-label">Browse Trips</span>
+      </a>
+      <a routerLink="/dashboard/messages" class="qa-card">
+        <span class="qa-icon"></span>
+        <span class="qa-label">Messages</span>
+        <span class="qa-badge">3</span>
+      </a>
+      <a routerLink="/dashboard/tracking" class="qa-card">
+        <span class="qa-icon"></span>
+        <span class="qa-label">Live Tracking</span>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+}

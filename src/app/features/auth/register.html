@@ -1,0 +1,272 @@
+<div class="auth-page">
+
+  <!-- Left panel -->
+  <div class="auth-left">
+    <div class="auth-left-content">
+      <div class="auth-brand">
+        <span class="brand-name">Bagy<span>Go</span></span>
+      </div>
+      <h1 class="auth-headline animate-fade-up">
+        Join the<br>
+        <em>community.</em>
+      </h1>
+      <p class="auth-tagline animate-fade-up delay-100">
+        Whether you're sending a bag or offering space in your car — BagyGo connects you with the right people.
+      </p>
+
+      <!-- Role illustration cards -->
+      <div class="role-cards animate-fade-up delay-200">
+        <div class="role-card" [class.active]="selectedRole() === 'EXPEDITEUR'">
+          <div class="rc-icon">📦</div>
+          <div class="rc-name">Expéditeur</div>
+          <div class="rc-desc">Post a request & receive offers from travelers</div>
+        </div>
+        <div class="role-card" [class.active]="selectedRole() === 'TRANSPORTEUR'">
+          <div class="rc-icon">✈️</div>
+          <div class="rc-name">Transporteur</div>
+          <div class="rc-desc">Offer spare space and earn on every trip</div>
+        </div>
+      </div>
+
+      <!-- How it works -->
+      <div class="how-it-works animate-fade-up delay-300">
+        <div class="hiw-title">How it works</div>
+        <div class="hiw-step">
+          <div class="hiw-num">01</div>
+          <div class="hiw-text">Post your baggage request or available trip</div>
+        </div>
+        <div class="hiw-step">
+          <div class="hiw-num">02</div>
+          <div class="hiw-text">Negotiate a fair price directly</div>
+        </div>
+        <div class="hiw-step">
+          <div class="hiw-num">03</div>
+          <div class="hiw-text">Track in real-time & rate each other</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+  </div>
+
+  <!-- Right panel — form -->
+  <div class="auth-right">
+    <div class="auth-form-wrapper animate-fade-up">
+
+      <!-- Progress steps -->
+      <div class="progress-steps">
+        @for (s of steps; track s.num) {
+          <div class="ps-item" [class.active]="step() === s.num" [class.done]="step() > s.num">
+            <div class="ps-circle">
+              @if (step() > s.num) { ✓ }
+              @else { {{ s.num }} }
+            </div>
+            <span class="ps-label">{{ s.label }}</span>
+          </div>
+          @if (!$last) { <div class="ps-line" [class.done]="step() > s.num"></div> }
+        }
+      </div>
+
+      <div class="form-header">
+        <h2>{{ step() === 1 ? 'Tell us about yourself' : 'Create your account' }}</h2>
+        <p>{{ step() === 1 ? 'Step 1 of 2 — Basic info' : 'Step 2 of 2 — Credentials' }}</p>
+      </div>
+
+      @if (error()) {
+        <div class="alert-error animate-scale-in">
+          <span>⚠️</span>
+          <span>{{ error() }}</span>
+        </div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+        <!-- ── STEP 1 ── -->
+        @if (step() === 1) {
+          <div class="animate-fade-up">
+
+            <!-- Role selector -->
+            <div class="role-selector">
+              <div
+                class="rs-option"
+                [class.active]="selectedRole() === 'EXPEDITEUR'"
+                (click)="selectRole('EXPEDITEUR')"
+              >
+                <span class="rs-emoji">📦</span>
+                <span>Expéditeur</span>
+              </div>
+              <div
+                class="rs-option"
+                [class.active]="selectedRole() === 'TRANSPORTEUR'"
+                (click)="selectRole('TRANSPORTEUR')"
+              >
+                <span class="rs-emoji">✈️</span>
+                <span>Transporteur</span>
+              </div>
+            </div>
+
+            <!-- Name row -->
+            <div class="form-row">
+              <div class="form-field">
+                <label>First name</label>
+                <div class="input-wrap">
+                  <span class="input-icon">👤</span>
+                  <input
+                    type="text"
+                    formControlName="firstName"
+                    placeholder="Yassine"
+                    [class.invalid]="f['firstName'].invalid && f['firstName'].touched"
+                    [class.valid]="f['firstName'].valid"
+                  />
+                </div>
+                @if (f['firstName'].invalid && f['firstName'].touched) {
+                  <span class="error-msg">At least 2 characters.</span>
+                }
+              </div>
+              <div class="form-field">
+                <label>Last name</label>
+                <div class="input-wrap">
+                  <span class="input-icon">👤</span>
+                  <input
+                    type="text"
+                    formControlName="lastName"
+                    placeholder="Benhali"
+                    [class.invalid]="f['lastName'].invalid && f['lastName'].touched"
+                    [class.valid]="f['lastName'].valid"
+                  />
+                </div>
+                @if (f['lastName'].invalid && f['lastName'].touched) {
+                  <span class="error-msg">At least 2 characters.</span>
+                }
+              </div>
+            </div>
+
+            <!-- Phone -->
+            <div class="form-field">
+              <label>Phone number</label>
+              <div class="input-wrap">
+                <span class="input-icon">📱</span>
+                <input
+                  type="tel"
+                  formControlName="phone"
+                  placeholder="+212 6XX XXX XXX"
+                  [class.invalid]="f['phone'].invalid && f['phone'].touched"
+                  [class.valid]="f['phone'].valid"
+                />
+              </div>
+              @if (f['phone'].invalid && f['phone'].touched) {
+                <span class="error-msg">Enter a valid phone number.</span>
+              }
+            </div>
+
+            <button type="button" class="btn btn-primary btn-block" (click)="nextStep()">
+              Continue <span>→</span>
+            </button>
+
+          </div>
+        }
+
+        <!-- ── STEP 2 ── -->
+        @if (step() === 2) {
+          <div class="animate-fade-up">
+
+            <!-- Email -->
+            <div class="form-field">
+              <label>Email address</label>
+              <div class="input-wrap">
+                <span class="input-icon">✉️</span>
+                <input
+                  type="email"
+                  formControlName="email"
+                  placeholder="you@example.com"
+                  [class.invalid]="f['email'].invalid && f['email'].touched"
+                  [class.valid]="f['email'].valid"
+                />
+              </div>
+              @if (f['email'].invalid && f['email'].touched) {
+                <span class="error-msg">Enter a valid email address.</span>
+              }
+            </div>
+
+            <!-- Password -->
+            <div class="form-field">
+              <label>Password</label>
+              <div class="input-wrap">
+                <span class="input-icon">🔐</span>
+                <input
+                  [type]="showPass() ? 'text' : 'password'"
+                  formControlName="password"
+                  placeholder="Min. 8 characters"
+                  [class.invalid]="f['password'].invalid && f['password'].touched"
+                  [class.valid]="f['password'].valid"
+                />
+                <button type="button" class="toggle-pass" (click)="togglePass()">
+                  {{ showPass() ? '🙈' : '👁️' }}
+                </button>
+              </div>
+              @if (f['password'].value) {
+                <div class="strength-meter">
+                  @for (i of [1,2,3,4]; track i) {
+                    <div
+                      class="strength-bar"
+                      [style.background]="i <= getPasswordStrength().level ? getPasswordStrength().color : 'var(--light)'"
+                    ></div>
+                  }
+                  <span class="strength-label" [style.color]="getPasswordStrength().color">
+                    {{ getPasswordStrength().label }}
+                  </span>
+                </div>
+              }
+            </div>
+
+            <!-- Confirm -->
+            <div class="form-field">
+              <label>Confirm password</label>
+              <div class="input-wrap">
+                <span class="input-icon">🔐</span>
+                <input
+                  type="password"
+                  formControlName="confirm"
+                  placeholder="Repeat your password"
+                  [class.invalid]="f['confirm'].touched && form.errors?.['mismatch']"
+                  [class.valid]="f['confirm'].touched && !form.errors?.['mismatch'] && f['confirm'].value"
+                />
+              </div>
+              @if (f['confirm'].touched && form.errors?.['mismatch']) {
+                <span class="error-msg">Passwords don't match.</span>
+              }
+            </div>
+
+            <div class="step2-actions">
+              <button type="button" class="btn btn-outline" (click)="prevStep()">
+                ← Back
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="loading()"
+              >
+                @if (loading()) {
+                  <span class="btn-spinner"></span>
+                  Creating...
+                } @else {
+                  Create Account ✨
+                }
+              </button>
+            </div>
+
+          </div>
+        }
+
+      </form>
+
+      <p class="auth-switch">
+        Already have an account?
+        <a routerLink="/auth/login">Log in →</a>
+      </p>
+
+    </div>
+  </div>
+
+</div>

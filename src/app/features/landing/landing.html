@@ -1,0 +1,422 @@
+<!-- ══════════════════════════════════════════════════════
+     NAVBAR
+══════════════════════════════════════════════════════ -->
+<header class="navbar" [class.navbar--scrolled]="scrolled()">
+  <div class="navbar__inner">
+    <a routerLink="/" class="navbar__logo">
+      <span class="logo-icon">🧳</span>
+      <span class="logo-text">Bagy<span class="logo-accent">Go</span></span>
+    </a>
+
+    <nav class="navbar__links">
+      <a href="#how-it-works">How it works</a>
+      <a href="#why-us">Why BagyGo</a>
+      <a href="#testimonials">Reviews</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+
+    <div class="navbar__cta">
+      <a routerLink="/auth/login"   class="btn-nav-ghost">Sign in</a>
+      <a routerLink="/auth/register" class="btn-nav-solid">Get started →</a>
+    </div>
+  </div>
+</header>
+
+
+<!-- ══════════════════════════════════════════════════════
+     HERO
+══════════════════════════════════════════════════════ -->
+<section class="hero">
+  <!-- Background blobs -->
+  <div class="hero__blob hero__blob--1"></div>
+  <div class="hero__blob hero__blob--2"></div>
+  <div class="hero__blob hero__blob--3"></div>
+  <!-- Noise texture overlay -->
+  <div class="hero__noise"></div>
+
+  <div class="hero__inner">
+
+    <!-- Left: copy -->
+    <div class="hero__copy">
+      <div class="hero__badge">
+        <span class="badge-dot"></span>
+        Morocco's #1 collaborative transport platform
+      </div>
+
+      <h1 class="hero__title">
+        Ship your bags<br/>
+        <span class="hero__title-accent">with people</span><br/>
+        already going.
+      </h1>
+
+      <p class="hero__subtitle">
+        Connect with verified transporters making your exact trip.
+        Get competitive prices, real-time tracking, and door-to-door delivery.
+      </p>
+
+      <div class="hero__actions">
+        <a routerLink="/auth/register" class="btn-hero-primary">
+          <span>Send a bag today</span>
+          <span class="btn-arrow">→</span>
+        </a>
+        <a routerLink="/auth/register" class="btn-hero-ghost">
+          Become a transporter
+        </a>
+      </div>
+
+      <!-- Trust row -->
+      <div class="hero__trust">
+        <div class="trust-item">
+          <span class="trust-icon"></span>
+          <span>Verified transporters</span>
+        </div>
+        <div class="trust-sep">·</div>
+        <div class="trust-item">
+          <span class="trust-icon"></span>
+          <span>Secure payments</span>
+        </div>
+        <div class="trust-sep">·</div>
+        <div class="trust-item">
+          <span class="trust-icon"></span>
+          <span>Live GPS tracking</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: floating card mockup -->
+    <div class="hero__card-wrap">
+
+      <!-- Main floating card -->
+      <div class="hero-card hero-card--main">
+        <div class="hc-header">
+          <span class="hc-tag"> Baggage Request</span>
+          <span class="hc-status"> Open</span>
+        </div>
+        <div class="hc-route">
+          <div class="hc-city">
+            <div class="hc-dot hc-dot--from"></div>
+            <span>Casablanca</span>
+          </div>
+          <div class="hc-line">
+            <div class="hc-line-bar"></div>
+            <span class="hc-plane">✈️</span>
+          </div>
+          <div class="hc-city">
+            <div class="hc-dot hc-dot--to"></div>
+            <span>Marrakech</span>
+          </div>
+        </div>
+        <div class="hc-meta">
+          <span> 12 kg</span>
+          <span> Dec 24</span>
+          <span class="hc-price">150 MAD</span>
+        </div>
+        <div class="hc-offers">
+          <div class="hc-offer" [class.hc-offer--active]="activeStep() === 0">
+            <div class="hc-offer-avatar" style="background: linear-gradient(135deg,#FF6B35,#FFD166)">SM</div>
+            <div class="hc-offer-info">
+              <span class="hco-name">Sara M.</span>
+              <span class="hco-stars">★★★★★</span>
+            </div>
+            <span class="hco-price">120 MAD</span>
+          </div>
+          <div class="hc-offer" [class.hc-offer--active]="activeStep() === 1">
+            <div class="hc-offer-avatar" style="background: linear-gradient(135deg,#2EC4B6,#4FD8CC)">KT</div>
+            <div class="hc-offer-info">
+              <span class="hco-name">Karim T.</span>
+              <span class="hco-stars">★★★★★</span>
+            </div>
+            <span class="hco-price">135 MAD</span>
+          </div>
+          <div class="hc-offer" [class.hc-offer--active]="activeStep() === 2">
+            <div class="hc-offer-avatar" style="background: linear-gradient(135deg,#667eea,#764ba2)">AR</div>
+            <div class="hc-offer-info">
+              <span class="hco-name">Amir R.</span>
+              <span class="hco-stars">★★★★☆</span>
+            </div>
+            <span class="hco-price">110 MAD</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating accent cards -->
+      <div class="hero-card hero-card--delivered">
+        <span class="hcd-icon">📬</span>
+        <div>
+          <div class="hcd-title">Delivered!</div>
+          <div class="hcd-sub">Fès → Agadir · 2 hrs ago</div>
+        </div>
+      </div>
+
+      <div class="hero-card hero-card--rating">
+        <span class="hcr-stars">★★★★★</span>
+        <span class="hcr-text">Punctual & professional</span>
+      </div>
+
+      <!-- Decorative grid -->
+      <div class="hero__grid"></div>
+    </div>
+
+  </div>
+
+  <!-- Stats bar at bottom of hero -->
+  <div class="hero__stats">
+    @for (stat of stats; track stat.label) {
+      <div class="hs-item">
+        <div class="hs-val">{{ stat.value }}</div>
+        <div class="hs-lbl">{{ stat.label }}</div>
+      </div>
+    }
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════
+     HOW IT WORKS
+══════════════════════════════════════════════════════ -->
+<section class="how-it-works" id="how-it-works">
+  <div class="section-inner">
+
+    <div class="section-label">How it works</div>
+    <h2 class="section-title">Sending or carrying?<br/>We've got you covered.</h2>
+    <p class="section-sub">BagyGo works for both sides of the journey.</p>
+
+    <!-- Tab toggle -->
+    <div class="hiw-tabs">
+      <button
+        class="hiw-tab"
+        [class.active]="activeTab() === 'sender'"
+        (click)="activeTab.set('sender')"
+      >
+         I want to send a bag
+      </button>
+      <button
+        class="hiw-tab"
+        [class.active]="activeTab() === 'transporter'"
+        (click)="activeTab.set('transporter')"
+      >
+        🚗 I'm a transporter
+      </button>
+    </div>
+
+    <!-- Steps -->
+    <div class="hiw-steps">
+      @for (step of howItWorks; track step.title; let i = $index) {
+        <div class="hiw-step" [class.active]="activeStep() === i">
+          <div class="hiw-step-num">{{ i + 1 }}</div>
+          <div class="hiw-step-icon">{{ step.icon }}</div>
+          <h3 class="hiw-step-title">{{ step.title }}</h3>
+          <p class="hiw-step-desc">{{ step.desc }}</p>
+          <div class="hiw-step-connector"></div>
+        </div>
+      }
+    </div>
+
+    <div class="hiw-cta">
+      <a routerLink="/auth/register" class="btn-section-cta">
+        {{ activeTab() === 'sender' ? 'Post your first request →' : 'Start earning today →' }}
+      </a>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════
+     WHY BAGYGO — feature grid
+══════════════════════════════════════════════════════ -->
+<section class="why-us" id="why-us">
+  <div class="why-us__diagonal"></div>
+  <div class="section-inner">
+
+    <div class="section-label light">Why BagyGo</div>
+    <h2 class="section-title light">Built for Morocco.<br/>Designed for trust.</h2>
+
+    <div class="features-grid">
+      <div class="feature-card feature-card--large">
+        <div class="fc-icon-wrap"></div>
+        <h3>Secure escrow payments</h3>
+        <p>Your money is held safely until you confirm delivery. No risk, no surprises.</p>
+        <div class="fc-decoration fc-decoration--lock"></div>
+      </div>
+
+      <div class="feature-card">
+        <div class="fc-icon-wrap"></div>
+        <h3>Real-time GPS tracking</h3>
+        <p>Know exactly where your bag is at every moment of the journey.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="fc-icon-wrap"></div>
+        <h3>Price negotiation</h3>
+        <p>Don't like an offer? Counter it. Find a price that works for everyone.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="fc-icon-wrap"></div>
+        <h3>ID-verified transporters</h3>
+        <p>Every transporter is verified with government ID before they can accept trips.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="fc-icon-wrap"></div>
+        <h3>Two-way ratings</h3>
+        <p>Both parties rate each other after every trip, keeping the community trustworthy.</p>
+      </div>
+
+      <div class="feature-card feature-card--accent">
+        <div class="fc-icon-wrap"></div>
+        <h3>In-app messaging</h3>
+        <p>Chat directly with your transporter. No need to share personal contact info.</p>
+        <div class="fc-decoration fc-decoration--chat"></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════
+     CITIES MARQUEE
+══════════════════════════════════════════════════════ -->
+<section class="cities-section">
+  <div class="section-inner">
+    <p class="cities-label">Active routes across Morocco</p>
+  </div>
+  <div class="cities-track">
+    <div class="cities-marquee">
+      @for (city of cities; track city) {
+        <div class="city-pill"> {{ city }}</div>
+      }
+      <!-- Duplicate for seamless loop -->
+      @for (city of cities; track city + '_dup') {
+        <div class="city-pill"> {{ city }}</div>
+      }
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════
+     TESTIMONIALS
+══════════════════════════════════════════════════════ -->
+<section class="testimonials" id="testimonials">
+  <div class="section-inner">
+    <div class="section-label">Reviews</div>
+    <h2 class="section-title">People love BagyGo.</h2>
+
+    <div class="testimonials-grid">
+      @for (t of testimonials; track t.name) {
+        <div class="testimonial-card">
+          <div class="tc-stars">
+            @for (s of [1,2,3,4,5]; track s) {
+              <span [class.tc-star-filled]="s <= t.rating">★</span>
+            }
+          </div>
+          <p class="tc-text">"{{ t.text }}"</p>
+          <div class="tc-author">
+            <div class="tc-avatar" [style.background]="t.gradient">{{ t.avatar }}</div>
+            <div>
+              <div class="tc-name">{{ t.name }}</div>
+              <div class="tc-meta">{{ t.role }} · {{ t.city }}</div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════
+     CTA BANNER
+══════════════════════════════════════════════════════ -->
+<section class="cta-banner">
+  <div class="cta-banner__blob"></div>
+  <div class="section-inner cta-banner__inner">
+    <h2 class="cta-banner__title">
+      Ready to ship smarter?
+    </h2>
+    <p class="cta-banner__sub">
+      Join thousands of Moroccans already using BagyGo to send and carry bags across the country.
+    </p>
+    <div class="cta-banner__actions">
+      <a routerLink="/auth/register" class="btn-hero-primary">
+        Create a free account →
+      </a>
+      <a routerLink="/auth/login" class="btn-hero-ghost">
+        Already have an account
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════
+     FAQ
+══════════════════════════════════════════════════════ -->
+<section class="faq" id="faq">
+  <div class="section-inner faq-inner">
+    <div>
+      <div class="section-label">FAQ</div>
+      <h2 class="section-title">Common questions.</h2>
+    </div>
+
+    <div class="faq-list">
+      @for (item of faqs; track item.q; let i = $index) {
+        <div class="faq-item" [class.open]="activeFaq() === i">
+          <button class="faq-q" (click)="toggleFaq(i)">
+            <span>{{ item.q }}</span>
+            <span class="faq-chevron">{{ activeFaq() === i ? '−' : '+' }}</span>
+          </button>
+          @if (activeFaq() === i) {
+            <div class="faq-a animate-fade-up">{{ item.a }}</div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer__inner">
+
+    <div class="footer__brand">
+      <div class="navbar__logo">
+        <span class="logo-icon">🧳</span>
+        <span class="logo-text">Bagy<span class="logo-accent">Go</span></span>
+      </div>
+      <p>The collaborative baggage transport platform for Morocco.</p>
+    </div>
+
+    <div class="footer__links">
+      <div class="fl-col">
+        <div class="fl-heading">Platform</div>
+        <a routerLink="/auth/register">Send a bag</a>
+        <a routerLink="/auth/register">Become a transporter</a>
+        <a href="#how-it-works">How it works</a>
+      </div>
+      <div class="fl-col">
+        <div class="fl-heading">Company</div>
+        <a href="#">About</a>
+        <a href="#">Blog</a>
+        <a href="#">Careers</a>
+      </div>
+      <div class="fl-col">
+        <div class="fl-heading">Legal</div>
+        <a href="#">Terms of Service</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Cookie Policy</a>
+      </div>
+    </div>
+
+  </div>
+  <div class="footer__bottom">
+    <span>© 2025 BagyGo. All rights reserved.</span>
+    <span>Made with ❤️ in Morocco</span>
+  </div>
+</footer>

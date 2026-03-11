@@ -1,0 +1,220 @@
+<div class="create-trip-page animate-fade-in">
+
+  <div class="page-header animate-fade-up">
+    <a routerLink="/dashboard/transporter/trips" class="back-btn">← Back to trips</a>
+    <h1 class="page-title">Post a New Trip</h1>
+    <p class="page-subtitle">Tell us your route and available space — senders will find you.</p>
+  </div>
+
+  @if (submitted()) {
+    <div class="success-card animate-scale-in">
+      <div class="sc-icon"></div>
+      <h2>Trip posted!</h2>
+      <p>Senders on your route can now find you and send requests. Redirecting…</p>
+      <div class="sc-loader"></div>
+    </div>
+  } @else {
+
+  <!-- Step progress -->
+  <div class="step-progress animate-fade-up delay-100">
+    @for (s of steps; track s.num) {
+      <div class="sp-item" [class.active]="step() === s.num" [class.done]="step() > s.num">
+        <div class="sp-circle">@if (step() > s.num) { ✓ } @else { {{ s.icon }} }</div>
+        <span class="sp-label">{{ s.label }}</span>
+      </div>
+      @if (!$last) {
+        <div class="sp-connector" [class.done]="step() > s.num"></div>
+      }
+    }
+  </div>
+
+  <div class="form-card animate-fade-up delay-200">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+      <!-- STEP 1 — Route -->
+      @if (step() === 1) {
+        <div class="step-content animate-fade-up">
+          <h3 class="step-title"> Where are you going?</h3>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label>Departure city</label>
+              <div class="select-wrap">
+                <span class="select-icon">🚀</span>
+                <select formControlName="departureCity" [class.invalid]="f['departureCity'].invalid && f['departureCity'].touched">
+                  <option value="" disabled selected>Select city...</option>
+                  @for (city of cities; track city) { <option [value]="city">{{ city }}</option> }
+                </select>
+              </div>
+            </div>
+            <div class="form-field">
+              <label>Arrival city</label>
+              <div class="select-wrap">
+                <span class="select-icon">🏁</span>
+                <select formControlName="arrivalCity" [class.invalid]="f['arrivalCity'].invalid && f['arrivalCity'].touched">
+                  <option value="" disabled selected>Select city...</option>
+                  @for (city of cities; track city) { <option [value]="city">{{ city }}</option> }
+                </select>
+              </div>
+            </div>
+          </div>
+
+          @if (sameCityError()) {
+            <div class="alert-warn"> Departure and arrival cities must be different.</div>
+          }
+
+          <div class="form-row">
+            <div class="form-field">
+              <label>Departure date & time</label>
+              <div class="input-wrap">
+                <span class="input-icon"></span>
+                <input type="datetime-local" formControlName="departureDate" [min]="minDateTime"
+                  [class.invalid]="f['departureDate'].invalid && f['departureDate'].touched" />
+              </div>
+            </div>
+            <div class="form-field">
+              <label>Estimated arrival <span class="optional">(optional)</span></label>
+              <div class="input-wrap">
+                <span class="input-icon">🏁</span>
+                <input type="datetime-local" formControlName="estimatedArrival" [min]="minDateTime" />
+              </div>
+            </div>
+          </div>
+
+          @if (f['departureCity'].value && f['arrivalCity'].value && !sameCityError()) {
+            <div class="route-preview animate-scale-in">
+              <div class="rp-city"><div class="rp-dot rp-dot--from"></div><span>{{ f['departureCity'].value }}</span></div>
+              <div class="rp-path">→</div>
+              <div class="rp-city"><div class="rp-dot rp-dot--to"></div><span>{{ f['arrivalCity'].value }}</span></div>
+            </div>
+          }
+
+          <div class="step-actions">
+            <button type="button" class="btn btn-primary" [disabled]="!step1Valid" (click)="nextStep()">
+              Continue to trip details →
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- STEP 2 — Details -->
+      @if (step() === 2) {
+        <div class="step-content animate-fade-up">
+          <h3 class="step-title"> Trip details</h3>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label>Available space (kg)</label>
+              <div class="input-wrap">
+                <span class="input-icon">⚖️</span>
+                <input type="number" formControlName="availableSpace" placeholder="e.g. 20"
+                  min="1" max="500" step="0.5"
+                  [class.invalid]="f['availableSpace'].invalid && f['availableSpace'].touched"
+                  [class.valid]="f['availableSpace'].valid" />
+              </div>
+              @if (f['availableSpace'].invalid && f['availableSpace'].touched) {
+                <span class="error-msg">Enter available space between 1 and 500 kg.</span>
+              }
+            </div>
+            <div class="form-field">
+              <label>Price per kg (MAD)</label>
+              <div class="input-wrap">
+                <span class="input-icon"></span>
+                <input type="number" formControlName="pricePerKg" placeholder="e.g. 15"
+                  min="1"
+                  [class.invalid]="f['pricePerKg'].invalid && f['pricePerKg'].touched"
+                  [class.valid]="f['pricePerKg'].valid" />
+              </div>
+              @if (f['pricePerKg'].invalid && f['pricePerKg'].touched) {
+                <span class="error-msg">Enter a price greater than 0.</span>
+              }
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label>Notes <span class="optional">(optional) — {{ f['notes'].value?.length ?? 0 }}/300</span></label>
+            <textarea formControlName="notes" rows="3" maxlength="300"
+              placeholder="Anything senders should know — transport method, luggage restrictions, pickup point…"></textarea>
+          </div>
+
+          <!-- Earning estimate -->
+          @if (f['availableSpace'].valid && f['pricePerKg'].valid) {
+            <div class="earn-preview animate-scale-in">
+              <span class="ep-label"> If you fill all your space you could earn:</span>
+              <span class="ep-val">{{ (f['availableSpace'].value * f['pricePerKg'].value) | number:'1.0-0' }} MAD</span>
+            </div>
+          }
+
+          <div class="step-actions">
+            <button type="button" class="btn btn-outline" (click)="prevStep()">← Back</button>
+            <button type="button" class="btn btn-primary" [disabled]="!step2Valid" (click)="nextStep()">
+              Review & Post →
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- STEP 3 — Review -->
+      @if (step() === 3) {
+        <div class="step-content animate-fade-up">
+          <h3 class="step-title"> Review your trip</h3>
+
+          <div class="review-card">
+            <div class="review-route">
+              <div class="review-city">
+                <div class="rp-dot rp-dot--from"></div>
+                <div><div class="review-city-label">From</div><div class="review-city-name">{{ f['departureCity'].value }}</div></div>
+              </div>
+              <div class="review-arrow">→</div>
+              <div class="review-city">
+                <div class="rp-dot rp-dot--to"></div>
+                <div><div class="review-city-label">To</div><div class="review-city-name">{{ f['arrivalCity'].value }}</div></div>
+              </div>
+            </div>
+
+            <div class="review-divider"></div>
+
+            <div class="review-grid">
+              <div class="review-item">
+                <span class="ri-icon"></span>
+                <div><div class="ri-label">Departure</div><div class="ri-val">{{ formatDT(f['departureDate'].value) }}</div></div>
+              </div>
+              @if (f['estimatedArrival'].value) {
+                <div class="review-item">
+                  <span class="ri-icon"></span>
+                  <div><div class="ri-label">Est. Arrival</div><div class="ri-val">{{ formatDT(f['estimatedArrival'].value) }}</div></div>
+                </div>
+              }
+              <div class="review-item">
+                <span class="ri-icon"></span>
+                <div><div class="ri-label">Available space</div><div class="ri-val">{{ f['availableSpace'].value }} kg</div></div>
+              </div>
+              <div class="review-item">
+                <span class="ri-icon"></span>
+                <div><div class="ri-label">Price per kg</div><div class="ri-val ri-price">{{ f['pricePerKg'].value }} MAD</div></div>
+              </div>
+            </div>
+
+            @if (f['notes'].value) {
+              <div class="review-divider"></div>
+              <div class="review-desc">
+                <div class="ri-label">Notes</div>
+                <p>{{ f['notes'].value }}</p>
+              </div>
+            }
+          </div>
+
+          <div class="step-actions">
+            <button type="button" class="btn btn-outline" (click)="prevStep()">← Edit</button>
+            <button type="submit" class="btn btn-primary" [disabled]="loading()">
+              @if (loading()) { <span class="btn-spinner-sm"></span> Posting… }
+              @else {  Post Trip }
+            </button>
+          </div>
+        </div>
+      }
+
+    </form>
+  </div>
+  }
+</div>

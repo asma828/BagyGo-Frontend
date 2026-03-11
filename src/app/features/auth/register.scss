@@ -1,0 +1,346 @@
+// Shared layout from login — just adding register-specific styles
+@use '../auth/login' as *;
+
+// ── Progress Steps ────────────────────────────────────────
+.progress-steps {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 28px;
+}
+
+.ps-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .ps-circle {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800;
+    background: var(--light);
+    color: var(--muted);
+    transition: var(--transition-fast);
+    flex-shrink: 0;
+  }
+
+  .ps-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    transition: var(--transition-fast);
+    white-space: nowrap;
+  }
+
+  &.active {
+    .ps-circle { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(255,107,53,0.35); }
+    .ps-label  { color: var(--primary); }
+  }
+
+  &.done {
+    .ps-circle { background: var(--success); color: white; }
+    .ps-label  { color: var(--success); }
+  }
+}
+
+.ps-line {
+  flex: 1;
+  height: 2px;
+  background: var(--light);
+  margin: 0 12px;
+  transition: var(--transition-smooth);
+
+  &.done { background: var(--success); }
+}
+
+// ── Role selector ─────────────────────────────────────────
+.role-selector {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.rs-option {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--light);
+  background: var(--white);
+  cursor: pointer;
+  transition: var(--transition-base);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--muted);
+
+  .rs-emoji { font-size: 20px; }
+
+  &:hover {
+    border-color: var(--primary-light);
+    color: var(--primary);
+  }
+
+  &.active {
+    border-color: var(--primary);
+    background: var(--primary-pale);
+    color: var(--primary-dark);
+    box-shadow: 0 4px 16px rgba(255,107,53,0.18);
+  }
+}
+
+// ── Form row ──────────────────────────────────────────────
+.form-row {
+  display: flex;
+  gap: 12px;
+
+  .form-field { flex: 1; }
+}
+
+// ── Role cards (left panel) ───────────────────────────────
+.role-cards {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.role-card {
+  flex: 1;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  transition: var(--transition-fast);
+
+  &.active {
+    background: rgba(255,107,53,0.15);
+    border-color: rgba(255,107,53,0.4);
+  }
+
+  .rc-icon { font-size: 24px; margin-bottom: 8px; }
+  .rc-name {
+    font-family: var(--font-display);
+    font-size: 14px; font-weight: 800; color: white;
+    margin-bottom: 4px;
+  }
+  .rc-desc { font-size: 11px; color: rgba(255,255,255,0.45); line-height: 1.5; }
+}
+
+// ── How it works ──────────────────────────────────────────
+.how-it-works {
+  .hiw-title {
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: var(--secondary); margin-bottom: 16px;
+  }
+}
+
+.hiw-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 14px;
+
+  .hiw-num {
+    font-family: var(--font-display);
+    font-size: 22px; font-weight: 900;
+    color: rgba(255,255,255,0.12);
+    flex-shrink: 0; line-height: 1.2;
+  }
+
+  .hiw-text {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.5;
+    padding-top: 2px;
+  }
+}
+
+// ── Password strength ─────────────────────────────────────
+.strength-meter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+
+  .strength-bar {
+    flex: 1;
+    height: 4px;
+    border-radius: var(--radius-full);
+    transition: background 0.3s ease;
+  }
+
+  .strength-label {
+    font-size: 11px;
+    font-weight: 700;
+    min-width: 50px;
+    text-align: right;
+    transition: color 0.3s ease;
+  }
+}
+
+// ── Step 2 actions ────────────────────────────────────────
+.step2-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+
+  .btn-outline {
+    flex-shrink: 0;
+    padding: 14px 20px;
+  }
+
+  .btn-primary {
+    flex: 1;
+
+    .btn-spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+  }
+}
+
+// Re-use from login
+.auth-page {
+  display: flex;
+  min-height: 100vh;
+}
+
+.auth-left {
+  flex: 1;
+  background: var(--dark);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 56px;
+  @media (max-width: 900px) { display: none; }
+}
+
+.auth-left-content {
+  position: relative;
+  z-index: 2;
+  max-width: 480px;
+}
+
+.auth-brand {
+  margin-bottom: 28px;
+  .brand-name {
+    font-family: var(--font-display);
+    font-size: 32px; font-weight: 900; color: white;
+    span { color: var(--primary); }
+  }
+}
+
+.auth-headline {
+  font-family: var(--font-display);
+  font-size: 52px; font-weight: 900;
+  color: white; line-height: 1.05; margin-bottom: 18px;
+  em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--secondary), var(--accent));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+.auth-tagline {
+  font-size: 16px; color: rgba(255,255,255,0.6);
+  line-height: 1.7; margin-bottom: 32px;
+}
+
+.blob {
+  position: absolute; border-radius: 50%; pointer-events: none;
+  animation: pulse 6s ease-in-out infinite;
+}
+.blob-1 {
+  width: 400px; height: 400px; top: -120px; right: -80px;
+  background: radial-gradient(circle, rgba(46,196,182,0.25) 0%, transparent 70%);
+}
+.blob-2 {
+  width: 280px; height: 280px; bottom: -60px; left: 10%;
+  background: radial-gradient(circle, rgba(255,107,53,0.20) 0%, transparent 70%);
+  animation-delay: 3s; animation-direction: reverse;
+}
+
+.auth-right {
+  width: 480px; flex-shrink: 0;
+  background: var(--white);
+  display: flex; align-items: center; justify-content: center;
+  padding: 48px;
+  overflow-y: auto;
+  @media (max-width: 900px) { width: 100%; padding: 32px 24px; }
+}
+
+.auth-form-wrapper { width: 100%; max-width: 380px; }
+
+.form-header {
+  margin-bottom: 24px;
+  h2 {
+    font-family: var(--font-display);
+    font-size: 26px; font-weight: 900; color: var(--dark); margin-bottom: 4px;
+  }
+  p { font-size: 13px; color: var(--muted); }
+}
+
+.alert-error {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px;
+  background: #FFF5F5; border: 1px solid #FEB2B2;
+  border-radius: var(--radius-md);
+  color: #C53030; font-size: 13px; font-weight: 500;
+  margin-bottom: 20px;
+}
+
+.form-field {
+  margin-bottom: 16px;
+  label {
+    display: block; font-size: 13px; font-weight: 600;
+    color: var(--mid); margin-bottom: 7px;
+  }
+}
+
+.input-wrap {
+  position: relative; display: flex; align-items: center;
+  .input-icon {
+    position: absolute; left: 14px; font-size: 16px;
+    pointer-events: none; z-index: 1;
+  }
+  input {
+    width: 100%; padding: 13px 44px;
+    background: var(--light); border: 2px solid transparent;
+    border-radius: var(--radius-md);
+    font-size: 14px; color: var(--dark);
+    transition: var(--transition-fast);
+    &:focus {
+      border-color: var(--primary); background: var(--white);
+      box-shadow: 0 0 0 4px rgba(255,107,53,0.10);
+    }
+    &.valid   { border-color: var(--success); }
+    &.invalid { border-color: var(--danger); background: #FFF5F5; }
+    &::placeholder { color: var(--muted); }
+  }
+  .toggle-pass {
+    position: absolute; right: 14px;
+    background: none; border: none; cursor: pointer;
+    font-size: 16px; padding: 0; line-height: 1;
+  }
+}
+
+.error-msg {
+  font-size: 12px; color: var(--danger); margin-top: 5px; display: block;
+}
+
+.auth-switch {
+  text-align: center; margin-top: 24px;
+  font-size: 13px; color: var(--muted);
+  a { color: var(--primary); font-weight: 700; &:hover { text-decoration: underline; } }
+}

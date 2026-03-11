@@ -1,0 +1,96 @@
+<div class="dashboard" [class.sidebar-collapsed]="!sidebarOpen()">
+
+  <!-- ── Sidebar ────────────────────────────────────────── -->
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <!-- Logo -->
+      <div class="sidebar-logo">
+        <span class="logo-text">Bagy<span>Go</span></span>
+        <button class="collapse-btn hide-mobile" (click)="toggleSidebar()">
+          {{ sidebarOpen() ? '◀' : '▶' }}
+        </button>
+      </div>
+
+      <!-- Role badge -->
+      <div class="role-badge">
+        <span class="role-icon">{{ user?.role === 'TRANSPORTEUR' ? '✈️' : '📦' }}</span>
+        <span class="role-text" *ngIf="sidebarOpen()">
+          {{ user?.role === 'TRANSPORTEUR' ? 'Transporteur' : 'Expéditeur' }}
+        </span>
+      </div>
+
+      <!-- Nav items -->
+      <nav class="sidebar-nav">
+        @for (item of navItems(); track item.route) {
+          <a
+            [routerLink]="item.route"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{exact: item.route.endsWith('sender') || item.route.endsWith('transporter')}"
+            class="nav-item"
+          >
+            <span class="nav-icon">{{ item.icon }}</span>
+            @if (sidebarOpen()) {
+              <span class="nav-label">{{ item.label }}</span>
+              @if (item.badge) {
+                <span class="nav-badge">{{ item.badge }}</span>
+              }
+            }
+          </a>
+        }
+      </nav>
+
+      <div class="sidebar-spacer"></div>
+
+      <!-- Settings -->
+      <a routerLink="/dashboard/settings" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">⚙️</span>
+        @if (sidebarOpen()) { <span class="nav-label">Settings</span> }
+      </a>
+
+      <!-- User profile -->
+      <div class="sidebar-user">
+        <div class="user-avatar">{{ getInitials() }}</div>
+        @if (sidebarOpen()) {
+          <div class="user-info">
+            <div class="user-name">{{ user?.firstName }} {{ user?.lastName }}</div>
+            <div class="user-email">{{ user?.email }}</div>
+          </div>
+          <button class="logout-btn" (click)="logout()" title="Log out">🚪</button>
+        }
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- ── Main Content ───────────────────────────────────── -->
+  <div class="main-area">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="mobile-menu-btn hide-desktop" (click)="toggleSidebar()">☰</button>
+        <div class="topbar-breadcrumb">BagyGo</div>
+      </div>
+      <div class="topbar-right">
+        <button class="topbar-btn">🔔 <span class="notif-dot"></span></button>
+        <div class="topbar-user">
+          <div class="topbar-avatar">{{ getInitials() }}</div>
+          <span class="topbar-name hide-mobile">{{ user?.firstName }}</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page content -->
+    <main class="page-content">
+      <router-outlet />
+    </main>
+
+  </div>
+
+</div>
+
+<!-- Mobile overlay -->
+@if (sidebarOpen()) {
+  <div class="sidebar-overlay hide-desktop" (click)="toggleSidebar()"></div>
+}

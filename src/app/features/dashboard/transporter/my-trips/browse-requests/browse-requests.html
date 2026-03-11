@@ -1,0 +1,149 @@
+<div class="browse-requests-page animate-fade-in">
+
+  <!-- Header -->
+  <div class="page-header animate-fade-up">
+    <div>
+      <h1 class="page-title">Browse Requests</h1>
+      <p class="page-subtitle">
+        {{ filtered().length }} open request{{ filtered().length !== 1 ? 's' : '' }} available — find ones that match your route.
+      </p>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-bar animate-fade-up delay-100">
+    <div class="filter-group">
+      <span class="filter-icon"></span>
+      <select [ngModel]="filterFrom()" (ngModelChange)="filterFrom.set($event)">
+        <option value="">From — any city</option>
+        @for (city of cities; track city) { @if (city) { <option [value]="city">{{ city }}</option> } }
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-icon">🏁</span>
+      <select [ngModel]="filterTo()" (ngModelChange)="filterTo.set($event)">
+        <option value="">To — any city</option>
+        @for (city of cities; track city) { @if (city) { <option [value]="city">{{ city }}</option> } }
+      </select>
+    </div>
+    <div class="filter-group filter-group--short">
+      <span class="filter-icon">⚖️</span>
+      <input type="number" placeholder="Max kg" min="1"
+        [ngModel]="filterMaxKg()" (ngModelChange)="filterMaxKg.set($event)" />
+    </div>
+    @if (hasActiveFilters()) {
+      <button class="clear-btn" (click)="clearFilters()">✕ Clear filters</button>
+    }
+  </div>
+
+  <!-- Content -->
+  @if (loading()) {
+    <div class="loader-wrap"><div class="spinner"></div></div>
+
+  } @else if (filtered().length === 0) {
+    <app-empty-state
+      icon="📭"
+      [title]="hasActiveFilters() ? 'No matching requests' : 'No open requests'"
+      [description]="hasActiveFilters()
+        ? 'Try adjusting your filters to see more requests.'
+        : 'Check back soon — new requests are posted every day.'"
+      [actionLabel]="hasActiveFilters() ? 'Clear filters' : ''"
+    />
+
+  } @else {
+    <div class="requests-grid animate-fade-up delay-200">
+      @for (req of filtered(); track req.id) {
+        <div class="req-card" [class.req-card--offered]="alreadyOffered().has(req.id)">
+
+          <!-- Card header -->
+          <div class="rc-head">
+            <div class="rc-route">
+              <span class="rc-city">{{ req.departureCity }}</span>
+              <div class="rc-path">
+                <div class="rc-path-line"></div>
+                <span>{{ req.isFragile ? '🔮' : '📦' }}</span>
+              </div>
+              <span class="rc-city">{{ req.arrivalCity }}</span>
+            </div>
+            <app-status-badge [status]="req.status" size="sm" />
+          </div>
+
+          <!-- Meta -->
+          <div class="rc-meta">
+            <span class="rc-chip"> {{ formatDate(req.desiredDate) }}</span>
+            <span class="rc-chip"> {{ req.weightKg }} kg</span>
+            <span class="rc-chip rc-chip--offers">🚛 {{ req.offersCount }} offer{{ req.offersCount !== 1 ? 's' : '' }}</span>
+            @if (req.isFragile) { <span class="rc-chip rc-chip--fragile">🔴 Fragile</span> }
+          </div>
+
+          <!-- Description -->
+          <p class="rc-desc">{{ req.description }}</p>
+
+          <!-- Footer -->
+          <div class="rc-footer">
+            <div class="rc-sender-price">
+              <span class="rc-price-label">Sender offers</span>
+              <span class="rc-price">{{ req.proposedPrice }} <span>MAD</span></span>
+            </div>
+
+            @if (alreadyOffered().has(req.id)) {
+              <div class="already-offered"> Offer sent</div>
+            } @else {
+              <button
+                class="btn-make-offer"
+                [class.btn-make-offer--open]="offeringOn() === req.id"
+                (click)="openOfferForm(req.id)"
+              >
+                {{ offeringOn() === req.id ? '✕ Close' : ' Make an Offer' }}
+              </button>
+            }
+          </div>
+
+          <!-- Offer form (inline) -->
+          @if (offeringOn() === req.id && !alreadyOffered().has(req.id)) {
+            <div class="offer-form animate-fade-up" [formGroup]="getForm(req.id)">
+              <div class="of-divider"></div>
+
+              <div class="of-row">
+                <div class="of-field">
+                  <label>Your price (MAD)</label>
+                  <div class="of-input-wrap">
+                    <span>💰</span>
+                    <input type="number" formControlName="proposedPrice"
+                      [formGroup]="getForm(req.id)"
+                      placeholder="e.g. {{ req.proposedPrice }}" min="1"
+                      [class.invalid]="getForm(req.id).get('proposedPrice')!.invalid && getForm(req.id).get('proposedPrice')!.touched" />
+                  </div>
+                  @if (getForm(req.id).get('proposedPrice')!.invalid && getForm(req.id).get('proposedPrice')!.touched) {
+                    <span class="of-error">Enter a valid price.</span>
+                  }
+                </div>
+              </div>
+
+              <div class="of-field">
+                <label>Message to sender <span class="of-optional">(optional)</span></label>
+                <textarea formControlName="message" [formGroup]="getForm(req.id)"
+                  placeholder="Introduce yourself, mention your transport method or experience…"
+                  rows="2" maxlength="200"></textarea>
+              </div>
+
+              <div class="of-actions">
+                <button class="btn btn-ghost btn-sm" (click)="openOfferForm(req.id)">Cancel</button>
+                <button
+                  class="btn btn-primary btn-sm"
+                  [disabled]="submitting() === req.id"
+                  (click)="submitOffer(req)"
+                >
+                  @if (submitting() === req.id) { <span class="spinner-xs"></span> Sending… }
+                  @else { Send Offer }
+                </button>
+              </div>
+            </div>
+          }
+
+        </div>
+      }
+    </div>
+  }
+
+</div>

@@ -1,12 +1,17 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { ToastContainerComponent } from './core/components/shared/toast/toast';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.scss'
+  standalone: true,
+  imports: [RouterOutlet, ToastContainerComponent],
+  template: `
+    <router-outlet />
+    <app-toast-container />
+  `,
+  styles: [`
+    :host { display: block; min-height: 100vh; }
+  `]
 })
-export class App {
-  protected readonly title = signal('bagygo-frontend');
-}
+export class App {}

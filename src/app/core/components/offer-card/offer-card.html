@@ -1,0 +1,71 @@
+<div class="offer-card" [class]="'offer-card--' + offer.status.toLowerCase()">
+
+  <!-- ── Transporter info ── -->
+  <div class="oc-header">
+    <app-avatar [user]="transporter" size="md" [showRating]="true" />
+    <div class="oc-user">
+      <div class="oc-name">{{ transporter.firstName }} {{ transporter.lastName }}</div>
+      <app-rating-stars [value]="transporter.rating" size="sm" [showValue]="true" [showCount]="true" [count]="transporter.totalDeliveries" />
+    </div>
+    <div class="oc-right">
+      <app-status-badge [status]="offer.status" size="sm" />
+      <div class="oc-time">{{ formatDate(offer.createdAt) }}</div>
+    </div>
+  </div>
+
+  <!-- ── Price ── -->
+  <div class="oc-price-row">
+    <div class="oc-price-block">
+      <div class="oc-price-label">Proposed price</div>
+      <div class="oc-price">{{ offer.proposedPrice }} <span>MAD</span></div>
+    </div>
+    <div class="oc-deliveries">
+      <div class="oc-del-num">{{ transporter.totalDeliveries }}</div>
+      <div class="oc-del-label">Deliveries</div>
+    </div>
+  </div>
+
+  <!-- ── Message ── -->
+  @if (offer.message) {
+    <div class="oc-message">
+      <span class="oc-message-icon">💬</span>
+      <span>{{ offer.message }}</span>
+    </div>
+  }
+
+  <!-- ── Counter form ── -->
+  @if (showCounterForm) {
+    <div class="oc-counter animate-scale-in">
+      <label class="oc-counter-label">Your counter-offer (MAD)</label>
+      <div class="oc-counter-row">
+        <input
+          type="number"
+          class="oc-counter-input"
+          [formControl]="counterCtrl"
+          placeholder="e.g. 120"
+          min="1"
+        />
+        <button class="btn btn-secondary btn-sm" (click)="submitCounter()" [disabled]="counterCtrl.invalid || loading">
+          Send ↗
+        </button>
+        <button class="btn btn-ghost btn-sm" (click)="toggleCounter()">Cancel</button>
+      </div>
+    </div>
+  }
+
+  <!-- ── Actions (only for sender, only when PENDING) ── -->
+  @if (canRespond && isPending && !showCounterForm) {
+    <div class="oc-actions">
+      <button class="btn btn-primary btn-sm" (click)="accepted.emit()" [disabled]="loading">
+        ✓ Accept
+      </button>
+      <button class="btn btn-outline btn-sm" (click)="toggleCounter()" [disabled]="loading">
+        ↗ Counter
+      </button>
+      <button class="btn btn-ghost btn-sm" (click)="declined.emit()" [disabled]="loading">
+        ✕ Decline
+      </button>
+    </div>
+  }
+
+</div>

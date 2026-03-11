@@ -1,0 +1,88 @@
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 26, 46, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+.dialog {
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  padding: 32px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 24px 80px rgba(26, 26, 46, 0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 20px;
+
+  // ── Icon wrap ──────────────────────────────────────────
+  &__icon-wrap {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    flex-shrink: 0;
+  }
+
+  &__icon { line-height: 1; }
+
+  // ── Content ────────────────────────────────────────────
+  &__body { display: flex; flex-direction: column; gap: 8px; }
+
+  &__title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--dark);
+  }
+
+  &__message {
+    font-size: 14px;
+    color: var(--mid);
+    line-height: 1.6;
+  }
+
+  // ── Actions ────────────────────────────────────────────
+  &__actions {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+
+    .btn { flex: 1; justify-content: center; }
+  }
+
+  &__confirm-btn {
+    &--danger  { background: linear-gradient(135deg, #FC8181, #E53E3E); color: white; box-shadow: 0 6px 20px rgba(229,62,62,0.30); }
+    &--warning { background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color: var(--dark); }
+    &--info    { background: linear-gradient(135deg, var(--secondary), #28a89d); color: white; }
+    &--success { background: linear-gradient(135deg, #48BB78, #276749); color: white; }
+  }
+
+  // ── Variant icon backgrounds ───────────────────────────
+  &--danger  .dialog__icon-wrap { background: #FFF5F5; }
+  &--warning .dialog__icon-wrap { background: #FFF8E7; }
+  &--info    .dialog__icon-wrap { background: var(--secondary-pale); }
+  &--success .dialog__icon-wrap { background: #F0FFF4; }
+}
+
+// ── Loading spinner ──────────────────────────────────────
+.btn-spinner-sm {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}

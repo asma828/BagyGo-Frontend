@@ -1,0 +1,174 @@
+<div class="ratings-page animate-fade-in">
+
+  <!-- Header -->
+  <div class="page-header animate-fade-up">
+    <div>
+      <h1 class="page-title">My Ratings</h1>
+      <p class="page-subtitle">Your reputation in the BagyGo community.</p>
+    </div>
+    <button class="btn btn-primary" (click)="showGiveRating.set(true)">+ Rate someone</button>
+  </div>
+
+  @if (loading()) {
+    <div class="loader-wrap"><div class="spinner"></div></div>
+  } @else {
+
+    <!-- Summary hero -->
+    @if (summary()) {
+      <div class="summary-hero animate-fade-up delay-100">
+
+        <!-- Big score -->
+        <div class="sh-score-wrap">
+          <div class="sh-score">{{ summary()!.average | number:'1.1-1' }}</div>
+          <div class="sh-stars">
+            @for (i of [1,2,3,4,5]; track i) {
+              <span class="sh-star" [class.filled]="i <= filledStars()" [class.half]="i === filledStars() + 1 && hasHalfStar()">★</span>
+            }
+          </div>
+          <div class="sh-total">Based on {{ summary()!.total }} rating{{ summary()!.total !== 1 ? 's' : '' }}</div>
+        </div>
+
+        <!-- Distribution bars -->
+        <div class="sh-distribution">
+          @for (star of [5,4,3,2,1]; track star) {
+            <div class="dist-row">
+              <div class="dist-label">
+                <span class="dist-star">★</span> {{ star }}
+              </div>
+              <div class="dist-bar-track">
+                <div class="dist-bar-fill" [style.width.%]="barWidth(star)" [class]="'fill--' + star"></div>
+              </div>
+              <div class="dist-count">{{ summary()!.distribution[star] ?? 0 }}</div>
+            </div>
+          }
+        </div>
+
+        <!-- Quick stats -->
+        <div class="sh-stats">
+          <div class="sh-stat">
+            <div class="sh-stat-val">{{ summary()!.total }}</div>
+            <div class="sh-stat-lbl">Total ratings</div>
+          </div>
+          <div class="sh-stat">
+            <div class="sh-stat-val">{{ summary()!.distribution[5] ?? 0 }}</div>
+            <div class="sh-stat-lbl">5-star reviews</div>
+          </div>
+          <div class="sh-stat">
+            <div class="sh-stat-val">{{ user?.totalDeliveries }}</div>
+            <div class="sh-stat-lbl">Deliveries done</div>
+          </div>
+        </div>
+
+      </div>
+    }
+
+    <!-- Ratings list -->
+    <div class="ratings-section animate-fade-up delay-200">
+      <h3 class="section-title">All reviews</h3>
+
+      @if (ratings().length === 0) {
+        <div class="empty-ratings">
+          <span class="empty-icon">⭐</span>
+          <p>No ratings yet. Complete deliveries to start building your reputation.</p>
+        </div>
+      } @else {
+        <div class="ratings-list">
+          @for (rating of ratings(); track rating.id) {
+            <div class="rating-card animate-fade-up">
+
+              <div class="rc-header">
+                <div class="rc-avatar" [style.background]="'linear-gradient(135deg, ' + (rating.fromUser.id % 2 === 0 ? '#FF6B35,#FFD166' : '#2EC4B6,#4FD8CC') + ')'">
+                  {{ rating.fromUser.firstName[0] }}{{ rating.fromUser.lastName[0] }}
+                </div>
+                <div class="rc-author">
+                  <div class="rc-name">{{ rating.fromUser.firstName }} {{ rating.fromUser.lastName }}</div>
+                  <div class="rc-date">{{ formatDate(rating.createdAt) }}</div>
+                </div>
+                <div class="rc-stars">
+                  @for (s of starArray(rating.score); track $index) {
+                    <span [class.star-filled]="s.filled">★</span>
+                  }
+                </div>
+              </div>
+
+              @if (rating.comment) {
+                <p class="rc-comment">"{{ rating.comment }}"</p>
+              }
+
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+  }
+</div>
+
+
+<!-- ── Give Rating Modal ── -->
+@if (showGiveRating()) {
+  <div class="modal-backdrop animate-fade-in" (click)="showGiveRating.set(false)">
+    <div class="modal-card animate-scale-in" (click)="$event.stopPropagation()" [formGroup]="giveForm">
+
+      <div class="modal-header">
+        <h3>Rate someone</h3>
+        <button class="modal-close" (click)="showGiveRating.set(false)">✕</button>
+      </div>
+
+      <div class="modal-body">
+
+        <!-- User ID field -->
+        <div class="mf-field">
+          <label>User ID to rate</label>
+          <div class="mf-input-wrap">
+            <span>👤</span>
+            <input type="number" formControlName="toUserId" placeholder="Enter user ID"
+              [class.invalid]="giveForm.get('toUserId')!.invalid && giveForm.get('toUserId')!.touched" />
+          </div>
+          <p class="mf-hint">You can find the User ID on any user's profile page.</p>
+        </div>
+
+        <!-- Star picker -->
+        <div class="mf-field">
+          <label>Your score</label>
+          <div class="star-picker">
+            @for (star of stars; track star) {
+              <button
+                type="button"
+                class="star-btn"
+                [class.active]="star <= (hoverStar() || selectedStar())"
+                (mouseenter)="hoverStar.set(star)"
+                (mouseleave)="hoverStar.set(0)"
+                (click)="setStar(star)"
+              >★</button>
+            }
+            @if (selectedStar() > 0) {
+              <span class="star-label">{{ ['', 'Poor', 'Fair', 'Good', 'Very good', 'Excellent'][selectedStar()] }}</span>
+            }
+          </div>
+          @if (giveForm.get('score')!.invalid && giveForm.get('score')!.touched) {
+            <span class="mf-error">Please select a score.</span>
+          }
+        </div>
+
+        <!-- Comment -->
+        <div class="mf-field">
+          <label>Comment <span class="optional">(optional)</span></label>
+          <textarea formControlName="comment" rows="3" maxlength="400"
+            placeholder="Share your experience with this person…"></textarea>
+          <span class="char-count">{{ giveForm.get('comment')!.value?.length ?? 0 }}/400</span>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" (click)="showGiveRating.set(false)">Cancel</button>
+        <button class="btn btn-primary" [disabled]="submitting()" (click)="submitRating()">
+          @if (submitting()) { <span class="spinner-sm"></span> Submitting… }
+          @else { Submit Rating ⭐ }
+        </button>
+      </div>
+
+    </div>
+  </div>
+}

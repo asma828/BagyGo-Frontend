@@ -1,0 +1,166 @@
+<div class="request-detail-page animate-fade-in">
+
+  @if (loading()) {
+    <div class="loader-wrap"><div class="spinner"></div></div>
+
+  } @else if (!request()) {
+    <app-empty-state
+      icon="🔍" title="Request not found"
+      description="This request doesn't exist or you don't have access."
+      actionLabel="Back to requests" actionRoute="/dashboard/sender/requests"
+    />
+
+  } @else {
+    <!-- ── Back + actions bar ── -->
+    <div class="top-bar animate-fade-up">
+      <a routerLink="/dashboard/sender/requests" class="back-btn">← My Requests</a>
+      <div class="top-actions">
+        @if (canCancel()) {
+          <button class="btn btn-ghost btn-sm" (click)="cancelDialog.set(true)">Cancel Request</button>
+        }
+      </div>
+    </div>
+
+    <div class="detail-layout">
+      <!-- ── Left: Request info ── -->
+      <div class="detail-main animate-fade-up delay-100">
+
+        <!-- Route hero card -->
+        <div class="route-hero">
+          <div class="rh-status">
+            <app-status-badge [status]="request()!.status" size="md" />
+            <span class="rh-id">#{{ request()!.id }}</span>
+          </div>
+          <div class="rh-route">
+            <div class="rh-city">
+              <div class="rh-dot rh-dot--from"></div>
+              <div>
+                <div class="rh-city-label">From</div>
+                <div class="rh-city-name">{{ request()!.departureCity }}</div>
+              </div>
+            </div>
+            <div class="rh-path">
+              <div class="rh-path-line"></div>
+              <span class="rh-path-icon">{{ request()!.isFragile ? '🔮' : '📦' }}</span>
+            </div>
+            <div class="rh-city rh-city--right">
+              <div class="rh-dot rh-dot--to"></div>
+              <div>
+                <div class="rh-city-label">To</div>
+                <div class="rh-city-name">{{ request()!.arrivalCity }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="rh-price">{{ request()!.proposedPrice }} <span>MAD</span></div>
+        </div>
+
+        <!-- Details grid -->
+        <div class="info-grid">
+          <div class="info-card">
+            <span class="info-icon">📅</span>
+            <div class="info-body">
+              <div class="info-label">Desired date</div>
+              <div class="info-val">{{ formatDate(request()!.desiredDate) }}</div>
+            </div>
+          </div>
+          <div class="info-card">
+            <span class="info-icon">⚖️</span>
+            <div class="info-body">
+              <div class="info-label">Weight</div>
+              <div class="info-val">{{ request()!.weightKg }} kg</div>
+            </div>
+          </div>
+          <div class="info-card">
+            <span class="info-icon">🚛</span>
+            <div class="info-body">
+              <div class="info-label">Offers received</div>
+              <div class="info-val">{{ request()!.offersCount }}</div>
+            </div>
+          </div>
+          <div class="info-card">
+            <span class="info-icon">🔮</span>
+            <div class="info-body">
+              <div class="info-label">Fragile</div>
+              <div class="info-val">{{ request()!.isFragile ? 'Yes' : 'No' }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="desc-card">
+          <h4 class="desc-title">Description</h4>
+          <p class="desc-text">{{ request()!.description }}</p>
+        </div>
+
+        <!-- Posted date -->
+        <p class="posted-at">Posted on {{ formatDate(request()!.createdAt) }}</p>
+      </div>
+
+      <!-- ── Right: Offers ── -->
+      <div class="detail-offers animate-fade-up delay-200">
+        <div class="offers-header">
+          <h3 class="offers-title">
+            Offers
+            @if (offers().length > 0) {
+              <span class="offers-count">{{ offers().length }}</span>
+            }
+          </h3>
+          @if (offersLoading()) {
+            <div class="spinner" style="width:24px;height:24px;border-width:2px"></div>
+          }
+        </div>
+
+        @if (!offersLoading()) {
+          <!-- Pending offers first -->
+          @if (pendingOffers.length > 0) {
+            <div class="offers-section">
+              <div class="os-label">🔔 Awaiting your response</div>
+              @for (offer of pendingOffers; track offer.id) {
+                <app-offer-card
+                  [offer]="offer"
+                  [canRespond]="true"
+                  [loading]="actionLoading() === offer.id"
+                  (accepted)="acceptOffer(offer)"
+                  (declined)="declineOffer(offer)"
+                  (countered)="counterOffer(offer, $event)"
+                />
+              }
+            </div>
+          }
+
+          <!-- Other offers -->
+          @if (otherOffers.length > 0) {
+            <div class="offers-section">
+              <div class="os-label">📋 Previous offers</div>
+              @for (offer of otherOffers; track offer.id) {
+                <app-offer-card [offer]="offer" [canRespond]="false" />
+              }
+            </div>
+          }
+
+          @if (offers.length === 0) {
+            <app-empty-state
+              icon="📭" size="sm"
+              title="No offers yet"
+              description="Transporters will see your request and start making offers soon."
+            />
+          }
+        }
+      </div>
+    </div>
+  }
+
+</div>
+
+<!-- Cancel dialog -->
+<app-confirm-dialog
+  [open]="cancelDialog()"
+  variant="warning"
+  title="Cancel this request?"
+  message="Once cancelled, transporters won't be able to see or offer on this request."
+  confirmLabel="Yes, cancel it"
+  cancelLabel="Keep it active"
+  [loading]="cancelling()"
+  (confirmed)="cancelRequest()"
+  (cancelled)="cancelDialog.set(false)"
+/>

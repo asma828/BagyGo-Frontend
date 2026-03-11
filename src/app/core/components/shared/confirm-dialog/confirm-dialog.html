@@ -1,0 +1,42 @@
+@if (open) {
+  <div class="dialog-backdrop" (click)="onBackdrop($event)">
+    <div class="dialog animate-scale-in" [class]="'dialog--' + variant" role="dialog" aria-modal="true">
+
+      <!-- Icon -->
+      <div class="dialog__icon-wrap">
+        <span class="dialog__icon">{{ icon }}</span>
+      </div>
+
+      <!-- Content -->
+      <div class="dialog__body">
+        <h3 class="dialog__title">{{ title }}</h3>
+        <p class="dialog__message">{{ message }}</p>
+      </div>
+
+      <!-- Actions -->
+      <div class="dialog__actions">
+        <button
+          class="btn btn-ghost"
+          (click)="onCancel()"
+          [disabled]="loading"
+        >
+          {{ cancelLabel }}
+        </button>
+        <button
+          class="btn dialog__confirm-btn"
+          [class]="'dialog__confirm-btn--' + variant"
+          (click)="onConfirm()"
+          [disabled]="loading"
+        >
+          @if (loading) {
+            <span class="btn-spinner-sm"></span>
+            Processing...
+          } @else {
+            {{ confirmLabel }}
+          }
+        </button>
+      </div>
+
+    </div>
+  </div>
+}

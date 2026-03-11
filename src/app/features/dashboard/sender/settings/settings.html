@@ -1,0 +1,146 @@
+<div class="settings-page animate-fade-in">
+
+  <div class="page-header animate-fade-up">
+    <div>
+      <h1 class="page-title">Settings</h1>
+      <p class="page-subtitle">Manage your account and profile information.</p>
+    </div>
+  </div>
+
+  <div class="settings-layout">
+
+    <!-- ── Left: Profile card ── -->
+    <div class="profile-sidebar animate-fade-up delay-100">
+      <div class="avatar-wrap">
+        @if (user?.avatarUrl) {
+          <img [src]="user!.avatarUrl" [alt]="user!.firstName" class="avatar-img" />
+        } @else {
+          <div class="avatar-placeholder">{{ getInitials() }}</div>
+        }
+        <div class="avatar-badge">{{ user?.role === 'EXPEDITEUR' ? '📦' : '🚗' }}</div>
+      </div>
+
+      <div class="profile-info">
+        <div class="profile-name">{{ user?.firstName }} {{ user?.lastName }}</div>
+        <div class="profile-role">{{ roleLabels[user?.role ?? ''] }}</div>
+        <div class="profile-email">{{ user?.email }}</div>
+      </div>
+
+      <div class="profile-stats">
+        <div class="pstat">
+          <div class="pstat-val">{{ user?.rating | number:'1.1-1' }}</div>
+          <div class="pstat-lbl">⭐ Rating</div>
+        </div>
+        <div class="pstat">
+          <div class="pstat-val">{{ user?.totalDeliveries }}</div>
+          <div class="pstat-lbl">📬 Deliveries</div>
+        </div>
+      </div>
+
+      <div class="member-since">
+        Member since {{ user?.createdAt | date:'MMMM yyyy' }}
+      </div>
+    </div>
+
+    <!-- ── Right: Edit form ── -->
+    <div class="settings-form-card animate-fade-up delay-200">
+
+      <h3 class="form-section-title">Personal information</h3>
+      <p class="form-section-sub">Update your public profile details.</p>
+
+      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" novalidate>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label>First name</label>
+            <input formControlName="firstName" type="text" placeholder="Your first name"
+              [class.invalid]="f['firstName'].invalid && f['firstName'].touched"
+              [class.valid]="f['firstName'].valid && f['firstName'].dirty" />
+            @if (f['firstName'].errors?.['required'] && f['firstName'].touched) {
+              <span class="error-msg">First name is required.</span>
+            }
+          </div>
+          <div class="form-field">
+            <label>Last name</label>
+            <input formControlName="lastName" type="text" placeholder="Your last name"
+              [class.invalid]="f['lastName'].invalid && f['lastName'].touched"
+              [class.valid]="f['lastName'].valid && f['lastName'].dirty" />
+            @if (f['lastName'].errors?.['required'] && f['lastName'].touched) {
+              <span class="error-msg">Last name is required.</span>
+            }
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label>Phone number</label>
+          <div class="input-prefix-wrap">
+            <span class="input-prefix">📞</span>
+            <input formControlName="phone" type="tel" placeholder="+212 6XX XXX XXX"
+              [class.invalid]="f['phone'].invalid && f['phone'].touched" />
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label>Avatar URL <span class="optional">(optional)</span></label>
+          <div class="input-prefix-wrap">
+            <span class="input-prefix">🖼️</span>
+            <input formControlName="avatarUrl" type="url" placeholder="https://your-image-url.com/avatar.jpg" />
+          </div>
+          @if (f['avatarUrl'].value) {
+            <div class="avatar-preview">
+              <img [src]="f['avatarUrl'].value" alt="Preview" (error)="f['avatarUrl'].setValue('')" />
+              <span>Preview</span>
+            </div>
+          }
+        </div>
+
+        <!-- Read-only fields -->
+        <div class="readonly-section">
+          <h4>Account details</h4>
+          <div class="readonly-grid">
+            <div class="readonly-field">
+              <label>Email</label>
+              <div class="readonly-value">{{ user?.email }} <span class="lock-icon">🔒</span></div>
+              <span class="readonly-note">Contact support to change email.</span>
+            </div>
+            <div class="readonly-field">
+              <label>Account type</label>
+              <div class="readonly-value">{{ roleLabels[user?.role ?? ''] }} <span class="lock-icon">🔒</span></div>
+              <span class="readonly-note">Role cannot be changed after registration.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="form-actions">
+          @if (saved()) {
+            <div class="saved-badge animate-scale-in">✅ Saved successfully</div>
+          }
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="saving() || !hasChanges || profileForm.invalid"
+          >
+            @if (saving()) { <span class="spinner-sm"></span> Saving… }
+            @else { Save changes }
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ── Danger zone ── -->
+  <div class="danger-zone animate-fade-up delay-300">
+    <h3 class="dz-title">Account</h3>
+    <div class="dz-row">
+      <div>
+        <div class="dz-label">Sign out</div>
+        <div class="dz-desc">Sign out of your BagyGo account on this device.</div>
+      </div>
+      <button class="btn btn-outline btn-sm" (click)="auth.logout()">Sign out</button>
+    </div>
+  </div>
+
+</div>

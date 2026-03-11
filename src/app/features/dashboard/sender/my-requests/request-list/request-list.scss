@@ -1,0 +1,186 @@
+.request-list-page { display: flex; flex-direction: column; gap: 20px; }
+
+// ── Header ────────────────────────────────────────────────
+.page-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  flex-wrap: wrap; gap: 16px;
+}
+.page-title {
+  font-family: var(--font-display); font-size: 26px; font-weight: 900;
+  color: var(--dark); margin-bottom: 4px;
+}
+.page-subtitle { font-size: 14px; color: var(--muted); }
+
+// ── Stats strip ───────────────────────────────────────────
+.stats-strip {
+  display: flex;
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.ss-item {
+  flex: 1;
+  padding: 16px;
+  text-align: center;
+  border-right: 1px solid var(--light);
+  &:last-child { border-right: none; }
+}
+
+.ss-num {
+  font-family: var(--font-display);
+  font-size: 26px; font-weight: 900; color: var(--dark);
+}
+.ss-lbl { font-size: 12px; color: var(--muted); font-weight: 600; margin-top: 2px; }
+
+.ss-open      .ss-num { color: var(--secondary); }
+.ss-pending   .ss-num { color: var(--accent-dark); }
+.ss-accepted  .ss-num { color: var(--success); }
+.ss-delivered .ss-num { color: #2B6CB0; }
+
+// ── Filter tabs ───────────────────────────────────────────
+.filter-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-tab {
+  padding: 8px 18px;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--light);
+  background: white;
+  font-size: 13px; font-weight: 600;
+  color: var(--mid);
+  cursor: pointer;
+  transition: var(--transition-base);
+
+  &:hover { border-color: var(--primary-light); color: var(--primary); }
+  &.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+    box-shadow: 0 4px 14px rgba(255,107,53,0.30);
+  }
+}
+
+// ── Loader ────────────────────────────────────────────────
+.loader-wrap {
+  display: flex; justify-content: center; padding: 60px;
+}
+
+// ── Requests grid ─────────────────────────────────────────
+.requests-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+// ── Request card ──────────────────────────────────────────
+.request-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: var(--transition-smooth);
+  border-left: 4px solid var(--light);
+
+  &:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(26,26,46,0.10); }
+
+  &.rc--open      { border-left-color: var(--secondary); }
+  &.rc--pending   { border-left-color: var(--accent-dark); }
+  &.rc--accepted  { border-left-color: var(--success); }
+  &.rc--in_transit{ border-left-color: #4299E1; }
+  &.rc--delivered { border-left-color: var(--success); }
+  &.rc--cancelled { border-left-color: var(--danger); opacity: 0.7; }
+}
+
+// ── Card header ───────────────────────────────────────────
+.rc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.rc-route {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.rc-city {
+  font-family: var(--font-display);
+  font-size: 16px; font-weight: 900; color: var(--dark);
+  white-space: nowrap;
+}
+
+.rc-arrow-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  flex: 1;
+  min-width: 32px;
+}
+
+.rc-arrow-line {
+  width: 100%; height: 2px;
+  background: linear-gradient(90deg, var(--secondary), var(--primary));
+  border-radius: 2px;
+}
+
+.rc-arrow-icon { font-size: 14px; margin-top: 2px; }
+
+// ── Meta ──────────────────────────────────────────────────
+.rc-meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.rc-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--mid);
+  font-weight: 500;
+
+  .rc-meta-icon { font-size: 13px; }
+}
+
+.rc-fragile { color: #C53030; font-weight: 700; }
+
+// ── Description ───────────────────────────────────────────
+.rc-desc {
+  font-size: 13px; color: var(--mid);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// ── Footer ────────────────────────────────────────────────
+.rc-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px solid var(--light);
+}
+
+.rc-price {
+  font-family: var(--font-display);
+  font-size: 22px; font-weight: 900; color: var(--primary);
+  span { font-size: 12px; color: var(--muted); font-weight: 600; }
+}
+
+.rc-actions { display: flex; gap: 8px; }

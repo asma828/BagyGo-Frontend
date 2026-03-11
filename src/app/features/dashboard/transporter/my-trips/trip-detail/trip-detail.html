@@ -1,0 +1,98 @@
+<div class="trip-detail-page animate-fade-in">
+
+  @if (loading()) {
+    <div class="loader-wrap"><div class="spinner"></div></div>
+
+  } @else if (!trip()) {
+    <app-empty-state icon="🔍" title="Trip not found"
+      description="This trip doesn't exist or was removed."
+      actionLabel="Back to my trips" actionRoute="/dashboard/transporter/trips" />
+
+  } @else {
+    <div class="top-bar animate-fade-up">
+      <a routerLink="/dashboard/transporter/trips" class="back-btn">← My Trips</a>
+      @if (canCancel()) {
+        <button class="btn btn-ghost btn-sm" (click)="cancelDialog.set(true)">Cancel Trip</button>
+      }
+    </div>
+
+    <!-- Hero card -->
+    <div class="trip-hero animate-fade-up delay-100">
+      <div class="th-top">
+        <div class="th-id">#{{ trip()!.id }}</div>
+        <app-status-badge [status]="trip()!.status" size="md" />
+      </div>
+      <div class="th-route">
+        <div class="th-city">
+          <div class="th-dot th-dot--from"></div>
+          <div>
+            <div class="th-city-label">From</div>
+            <div class="th-city-name">{{ trip()!.departureCity }}</div>
+          </div>
+        </div>
+        <div class="th-path">
+          <div class="th-path-line"></div>
+          <span>🚗</span>
+        </div>
+        <div class="th-city th-city--right">
+          <div class="th-dot th-dot--to"></div>
+          <div>
+            <div class="th-city-label">To</div>
+            <div class="th-city-name">{{ trip()!.arrivalCity }}</div>
+          </div>
+        </div>
+      </div>
+      <div class="th-earnings">
+        <span class="th-earn-label">Max. earnings at full capacity</span>
+        <span class="th-earn-val">
+          {{ trip()!.availableSpace * trip()!.pricePerKg | number:'1.0-0' }}
+          <span>MAD</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Info grid -->
+    <div class="info-grid animate-fade-up delay-200">
+      <div class="info-card">
+        <span class="info-icon">📅</span>
+        <div><div class="info-label">Departure</div><div class="info-val">{{ formatDT(trip()!.departureDate) }}</div></div>
+      </div>
+      @if (trip()!.estimatedArrival) {
+        <div class="info-card">
+          <span class="info-icon">🏁</span>
+          <div><div class="info-label">Est. Arrival</div><div class="info-val">{{ formatDT(trip()!.estimatedArrival) }}</div></div>
+        </div>
+      }
+      <div class="info-card">
+        <span class="info-icon">⚖️</span>
+        <div><div class="info-label">Available space</div><div class="info-val">{{ trip()!.availableSpace }} kg</div></div>
+      </div>
+      <div class="info-card">
+        <span class="info-icon">💰</span>
+        <div><div class="info-label">Price per kg</div><div class="info-val" style="color:var(--secondary)">{{ trip()!.pricePerKg }} MAD</div></div>
+      </div>
+    </div>
+
+    @if (trip()!.notes) {
+      <div class="notes-card animate-fade-up delay-300">
+        <h4>Notes</h4>
+        <p>{{ trip()!.notes }}</p>
+      </div>
+    }
+
+    <p class="posted-at animate-fade-up delay-300">Posted {{ formatDT(trip()!.createdAt) }}</p>
+  }
+
+</div>
+
+<app-confirm-dialog
+  [open]="cancelDialog()"
+  variant="warning"
+  title="Cancel this trip?"
+  message="Once cancelled, senders won't be able to find or make requests on this trip."
+  confirmLabel="Yes, cancel it"
+  cancelLabel="Keep it active"
+  [loading]="cancelling()"
+  (confirmed)="cancelTrip()"
+  (cancelled)="cancelDialog.set(false)"
+/>
