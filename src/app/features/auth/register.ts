@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
 import { UserRole } from '../../core/models';
+import { UploadService } from '../../core/services/upload.service';
 
 @Component({
   selector: 'app-register',
@@ -28,6 +29,7 @@ export class RegisterComponent {
   constructor(
     private fb: FormBuilder,
     private auth: AuthService,
+    private uploadSvc: UploadService,
     private router: Router
   ) {
     this.form = this.fb.group({
@@ -40,7 +42,17 @@ export class RegisterComponent {
       email:    ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirm:  ['', Validators.required],
-    }, { validators: this.passwordMatch });
+      transportDocumentUrl: ['']
+    }, { validators: [this.passwordMatch, this.transporterDocRequired] });
+  }
+
+  private transporterDocRequired(ctrl: AbstractControl) {
+    const role = ctrl.get('role')?.value;
+    const doc  = ctrl.get('transportDocumentUrl')?.value;
+    if (role === 'TRANSPORTEUR' && !doc) {
+      return { docRequired: true };
+    }
+    return null;
   }
 
   private passwordMatch(ctrl: AbstractControl) {
@@ -65,6 +77,23 @@ export class RegisterComponent {
 
   prevStep() { this.step.set(1); }
 
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    this.loading.set(true);
+    this.uploadSvc.upload(file).subscribe({
+      next: (res) => {
+        this.form.patchValue({ transportDocumentUrl: res.fileUrl });
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.error.set('Failed to upload document. Please try again.');
+        this.loading.set(false);
+      }
+    });
+  }
+
   onSubmit() {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
 
@@ -76,8 +105,7 @@ export class RegisterComponent {
     this.auth.register(payload).subscribe({
       next: (res) => {
         this.loading.set(false);
-        const role = res.user.role;
-        this.router.navigate([role === 'TRANSPORTEUR' ? '/dashboard/transporter' : '/dashboard/sender']);
+        this.router.navigate(['/auth/login']);
       },
       error: (err) => {
         this.loading.set(false);

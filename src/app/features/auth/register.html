@@ -17,12 +17,16 @@
       <!-- Role illustration cards -->
       <div class="role-cards animate-fade-up delay-200">
         <div class="role-card" [class.active]="selectedRole() === 'EXPEDITEUR'">
-          <div class="rc-icon">📦</div>
+          <div class="rc-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+          </div>
           <div class="rc-name">Expéditeur</div>
           <div class="rc-desc">Post a request & receive offers from travelers</div>
         </div>
         <div class="role-card" [class.active]="selectedRole() === 'TRANSPORTEUR'">
-          <div class="rc-icon">✈️</div>
+          <div class="rc-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8l-8.2-1.8c-.5-.1-1 .1-1.3.4-.3.4-.4 1-.1 1.4l7.2 3.6-3.6 7.2c-.4.3-.4.9-.1 1.4.3.3.8.5 1.2.4L16 18l2.2 2.2c.5.5 1.3.5 1.8 0 .5-.5.5-1.3 0-1.8Z"/></svg>
+          </div>
           <div class="rc-name">Transporteur</div>
           <div class="rc-desc">Offer spare space and earn on every trip</div>
         </div>
@@ -59,7 +63,9 @@
         @for (s of steps; track s.num) {
           <div class="ps-item" [class.active]="step() === s.num" [class.done]="step() > s.num">
             <div class="ps-circle">
-              @if (step() > s.num) { ✓ }
+              @if (step() > s.num) { 
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+              }
               @else { {{ s.num }} }
             </div>
             <span class="ps-label">{{ s.label }}</span>
@@ -75,7 +81,7 @@
 
       @if (error()) {
         <div class="alert-error animate-scale-in">
-          <span>⚠️</span>
+          <span></span>
           <span>{{ error() }}</span>
         </div>
       }
@@ -93,7 +99,9 @@
                 [class.active]="selectedRole() === 'EXPEDITEUR'"
                 (click)="selectRole('EXPEDITEUR')"
               >
-                <span class="rs-emoji">📦</span>
+                <span class="rs-emoji">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+                </span>
                 <span>Expéditeur</span>
               </div>
               <div
@@ -101,7 +109,9 @@
                 [class.active]="selectedRole() === 'TRANSPORTEUR'"
                 (click)="selectRole('TRANSPORTEUR')"
               >
-                <span class="rs-emoji">✈️</span>
+                <span class="rs-emoji">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8l-8.2-1.8c-.5-.1-1 .1-1.3.4-.3.4-.4 1-.1 1.4l7.2 3.6-3.6 7.2c-.4.3-.4.9-.1 1.4.3.3.8.5 1.2.4L16 18l2.2 2.2c.5.5 1.3.5 1.8 0 .5-.5.5-1.3 0-1.8Z"/></svg>
+                </span>
                 <span>Transporteur</span>
               </div>
             </div>
@@ -111,7 +121,9 @@
               <div class="form-field">
                 <label>First name</label>
                 <div class="input-wrap">
-                  <span class="input-icon">👤</span>
+                  <span class="input-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  </span>
                   <input
                     type="text"
                     formControlName="firstName"
@@ -127,7 +139,9 @@
               <div class="form-field">
                 <label>Last name</label>
                 <div class="input-wrap">
-                  <span class="input-icon">👤</span>
+                  <span class="input-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  </span>
                   <input
                     type="text"
                     formControlName="lastName"
@@ -146,7 +160,9 @@
             <div class="form-field">
               <label>Phone number</label>
               <div class="input-wrap">
-                <span class="input-icon">📱</span>
+                <span class="input-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+                </span>
                 <input
                   type="tel"
                   formControlName="phone"
@@ -175,7 +191,9 @@
             <div class="form-field">
               <label>Email address</label>
               <div class="input-wrap">
-                <span class="input-icon">✉️</span>
+                <span class="input-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                </span>
                 <input
                   type="email"
                   formControlName="email"
@@ -193,7 +211,9 @@
             <div class="form-field">
               <label>Password</label>
               <div class="input-wrap">
-                <span class="input-icon">🔐</span>
+                <span class="input-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </span>
                 <input
                   [type]="showPass() ? 'text' : 'password'"
                   formControlName="password"
@@ -202,7 +222,11 @@
                   [class.valid]="f['password'].valid"
                 />
                 <button type="button" class="toggle-pass" (click)="togglePass()">
-                  {{ showPass() ? '🙈' : '👁️' }}
+                  @if (showPass()) {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.52 13.52 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
+                  } @else {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0z"/><circle cx="12" cy="12" r="3"/></svg>
+                  }
                 </button>
               </div>
               @if (f['password'].value) {
@@ -224,7 +248,9 @@
             <div class="form-field">
               <label>Confirm password</label>
               <div class="input-wrap">
-                <span class="input-icon">🔐</span>
+                <span class="input-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </span>
                 <input
                   type="password"
                   formControlName="confirm"
@@ -237,6 +263,39 @@
                 <span class="error-msg">Passwords don't match.</span>
               }
             </div>
+
+            <!-- Transport Document (Transporter Only) -->
+            @if (selectedRole() === 'TRANSPORTEUR') {
+              <div class="form-field animate-fade-up">
+                <label>Means of Transport Document (PDF/Image)</label>
+                <div class="file-upload-wrapper" [class.has-file]="f['transportDocumentUrl'].value">
+                  <input
+                    type="file"
+                    id="transportDoc"
+                    (change)="onFileSelected($event)"
+                    accept="image/*,application/pdf"
+                    hidden
+                  />
+                  <label for="transportDoc" class="file-upload-label">
+                    <span class="upload-icon">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M9 15h6"/><path d="M9 12h6"/></svg>
+                    </span>
+                    <div class="upload-text">
+                      @if (f['transportDocumentUrl'].value) {
+                        <strong>Document Uploaded</strong>
+                        <span class="file-path">Click to change file</span>
+                      } @else {
+                        <strong>Select a Document</strong>
+                        <span>Upload your vehicle registration or insurance</span>
+                      }
+                    </div>
+                  </label>
+                </div>
+                @if (form.errors?.['docRequired'] && f['transportDocumentUrl'].touched) {
+                  <span class="error-msg">This document is mandatory for travelers.</span>
+                }
+              </div>
+            }
 
             <div class="step2-actions">
               <button type="button" class="btn btn-outline" (click)="prevStep()">
@@ -251,7 +310,7 @@
                   <span class="btn-spinner"></span>
                   Creating...
                 } @else {
-                  Create Account ✨
+                  Create Account 
                 }
               </button>
             </div>

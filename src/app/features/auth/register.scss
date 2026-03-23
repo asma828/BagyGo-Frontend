@@ -339,6 +339,65 @@
   font-size: 12px; color: var(--danger); margin-top: 5px; display: block;
 }
 
+// ── File Upload Wrapper ──────────────────────────────────
+.file-upload-wrapper {
+  margin-top: 8px;
+  
+  .file-upload-label {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    background: var(--light);
+    border: 2px dashed var(--light-dark);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: var(--transition-base);
+
+    &:hover {
+      border-color: var(--primary-light);
+      background: var(--white);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .upload-icon {
+      font-size: 32px;
+      opacity: 0.6;
+    }
+
+    .upload-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      
+      strong {
+        font-size: 14px;
+        color: var(--dark);
+      }
+      
+      span {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .file-path {
+        color: var(--primary);
+        font-weight: 600;
+      }
+    }
+  }
+
+  &.has-file {
+    .file-upload-label {
+      border-style: solid;
+      border-color: var(--success-light);
+      background: #F0FFF4; // light success background
+      
+      .upload-icon { opacity: 1; filter: grayscale(0); }
+    }
+  }
+}
+
 .auth-switch {
   text-align: center; margin-top: 24px;
   font-size: 13px; color: var(--muted);
