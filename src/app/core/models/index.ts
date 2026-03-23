@@ -1,6 +1,6 @@
 // ── User & Auth Models ────────────────────────────────────
 
-export type UserRole = 'EXPEDITEUR' | 'TRANSPORTEUR';
+export type UserRole = 'EXPEDITEUR' | 'TRANSPORTEUR' | 'ADMIN';
 
 export interface User {
   id: number;
@@ -12,6 +12,8 @@ export interface User {
   rating: number;
   totalDeliveries: number;
   avatarUrl?: string;
+  isVerified: boolean;
+  isBanned: boolean;
   createdAt: string;
 }
 
@@ -49,6 +51,8 @@ export interface Trip {
   pricePerKg: number;
   status: TripStatus;
   notes?: string;
+  currentLat?: number;
+  currentLng?: number;
   createdAt: string;
 }
 
@@ -80,6 +84,10 @@ export interface BaggageRequest {
   imageUrl?: string;
   createdAt: string;
   offersCount: number;
+  trip?: Trip;
+  isDedicatedTrip?: boolean;
+  message?: string;
+  isPaid?: boolean;
 }
 
 export interface CreateBaggageRequest {
@@ -90,6 +98,8 @@ export interface CreateBaggageRequest {
   description: string;
   proposedPrice: number;
   isFragile: boolean;
+  tripId?: number;
+  message?: string;
 }
 
 // ── Transport Offer Models ────────────────────────────────
@@ -108,6 +118,7 @@ export interface TransportOffer {
 
 export interface CreateOfferRequest {
   baggageRequestId: number;
+  tripId?: number;
   proposedPrice: number;
   message?: string;
 }
@@ -167,7 +178,10 @@ export interface SenderDashboard {
   activeRequests: number;
   offersReceived: number;
   delivered: number;
+  pendingPayments: number;
   avgRating: number;
+  activeRequestsList: BaggageRequest[];
+  availableTrips: Trip[];
   recentActivity: ActivityItem[];
 }
 
@@ -175,7 +189,6 @@ export interface TransporterDashboard {
   activeTrips: number;
   offersMade: number;
   delivered: number;
-  earnings: number;
   avgRating: number;
   recentActivity: ActivityItem[];
 }
