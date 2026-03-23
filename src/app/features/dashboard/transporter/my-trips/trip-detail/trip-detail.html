@@ -10,7 +10,23 @@
 
   } @else {
     <div class="top-bar animate-fade-up">
-      <a routerLink="/dashboard/transporter/trips" class="back-btn">← My Trips</a>
+      <div class="top-bar-left">
+        <a routerLink="/dashboard/transporter/trips" class="back-btn">← My Trips</a>
+        @if (trip()?.status === 'OPEN' || trip()?.status === 'FULL') {
+          <button class="btn btn-primary btn-sm" (click)="startTrip()">Start Trip</button>
+        }
+        @if (trip()?.status === 'IN_PROGRESS') {
+          <button class="btn btn-warning btn-sm" (click)="finishTrip()">Finish Trip</button>
+          <button 
+            class="btn btn-sm" 
+            [class.btn-success]="isSharing()" 
+            [class.btn-outline]="!isSharing()"
+            (click)="toggleShareLocation()"
+          >
+            <span [innerHTML]="isSharing() ? '<i class=\'fa-solid fa-satellite-dish\'></i> Sharing Location...' : '<i class=\'fa-solid fa-location-dot\'></i> Share Location'"></span>
+          </button>
+        }
+      </div>
       @if (canCancel()) {
         <button class="btn btn-ghost btn-sm" (click)="cancelDialog.set(true)">Cancel Trip</button>
       }
@@ -32,7 +48,7 @@
         </div>
         <div class="th-path">
           <div class="th-path-line"></div>
-          <span>🚗</span>
+          <span><i class="fa-solid fa-car"></i></span>
         </div>
         <div class="th-city th-city--right">
           <div class="th-dot th-dot--to"></div>
@@ -54,21 +70,21 @@
     <!-- Info grid -->
     <div class="info-grid animate-fade-up delay-200">
       <div class="info-card">
-        <span class="info-icon">📅</span>
+        <span class="info-icon"><i class="fa-regular fa-calendar"></i></span>
         <div><div class="info-label">Departure</div><div class="info-val">{{ formatDT(trip()!.departureDate) }}</div></div>
       </div>
       @if (trip()!.estimatedArrival) {
         <div class="info-card">
-          <span class="info-icon">🏁</span>
+          <span class="info-icon"><i class="fa-solid fa-flag-checkered"></i></span>
           <div><div class="info-label">Est. Arrival</div><div class="info-val">{{ formatDT(trip()!.estimatedArrival) }}</div></div>
         </div>
       }
       <div class="info-card">
-        <span class="info-icon">⚖️</span>
+        <span class="info-icon"><i class="fa-solid fa-weight-scale"></i></span>
         <div><div class="info-label">Available space</div><div class="info-val">{{ trip()!.availableSpace }} kg</div></div>
       </div>
       <div class="info-card">
-        <span class="info-icon">💰</span>
+        <span class="info-icon"><i class="fa-solid fa-sack-dollar"></i></span>
         <div><div class="info-label">Price per kg</div><div class="info-val" style="color:var(--secondary)">{{ trip()!.pricePerKg }} MAD</div></div>
       </div>
     </div>
