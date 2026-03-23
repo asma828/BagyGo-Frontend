@@ -42,8 +42,8 @@
         class="filter-tab"
         [class.active]="activeFilter() === f.value"
         (click)="setFilter(f.value)"
+        [innerHTML]="f.label"
       >
-        {{ f.label }}
       </button>
     }
   </div>
@@ -55,7 +55,6 @@
     </div>
   } @else if (filtered().length === 0) {
     <app-empty-state
-      icon="📭"
       title="No requests found"
       [description]="activeFilter() === 'ALL'
         ? 'Post your first baggage request to get started.'
@@ -74,7 +73,7 @@
               <span class="rc-city">{{ req.departureCity }}</span>
               <div class="rc-arrow-wrap">
                 <div class="rc-arrow-line"></div>
-                <span class="rc-arrow-icon">{{ req.isFragile ? '🔮' : '📦' }}</span>
+                <span [innerHTML]="req.isFragile ? '<i class=\'fa-solid fa-wine-glass\'></i>' : '<i class=\'fa-solid fa-box\'></i>'"></span>
               </div>
               <span class="rc-city">{{ req.arrivalCity }}</span>
             </div>
@@ -84,20 +83,20 @@
           <!-- Card meta -->
           <div class="rc-meta">
             <div class="rc-meta-item">
-              <span class="rc-meta-icon">📅</span>
+              <span class="rc-meta-icon"><i class="fa-regular fa-calendar"></i></span>
               <span>{{ formatDate(req.desiredDate) }}</span>
             </div>
             <div class="rc-meta-item">
-              <span class="rc-meta-icon">⚖️</span>
+              <span class="rc-meta-icon"><i class="fa-solid fa-weight-scale"></i></span>
               <span>{{ req.weightKg }} kg</span>
             </div>
             <div class="rc-meta-item">
-              <span class="rc-meta-icon">🚛</span>
+              <span class="rc-meta-icon"><i class="fa-solid fa-truck-fast"></i></span>
               <span>{{ req.offersCount }} offer{{ req.offersCount !== 1 ? 's' : '' }}</span>
             </div>
             @if (req.isFragile) {
               <div class="rc-meta-item rc-fragile">
-                <span>🔴 Fragile</span>
+                <span><i class="fa-solid fa-circle text-danger"></i> Fragile</span>
               </div>
             }
           </div>
@@ -124,6 +123,30 @@
                 >
                   Cancel
                 </button>
+              }
+              @if ((req.status === 'ACCEPTED' || req.status === 'IN_TRANSIT' || req.status === 'DELIVERED') && !req.isPaid) {
+                <button
+                  class="btn btn-primary btn-sm pay-btn"
+                  (click)="proceedToPayment(req.id)"
+                  [disabled]="payingId() === req.id"
+                >
+                  @if (payingId() === req.id) {
+                    Processing...
+                  } @else {
+                    💳 Proceed to Payment
+                  }
+                </button>
+              }
+              @if (req.status === 'DELIVERED' && req.isPaid) {
+                <button
+                  class="btn btn-success btn-sm"
+                  (click)="confirmDelivery(req.id)"
+                >
+                  ✓ Confirm Delivery
+                </button>
+              }
+              @if (req.isPaid) {
+                 <span class="paid-badge"><i class="fa-solid fa-circle-check text-success"></i> Paid</span>
               }
             </div>
           </div>
