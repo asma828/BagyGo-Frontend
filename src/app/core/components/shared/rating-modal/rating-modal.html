@@ -1,0 +1,50 @@
+@if (isOpen()) {
+<div class="modal-overlay" (click)="close.emit()">
+  <div class="modal-content animate-fade-up" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Rate Transporter</h2>
+      <button class="close-btn" (click)="close.emit()">×</button>
+    </div>
+    
+    <div class="modal-body">
+      <p class="rating-prompt">How was your delivery experience?</p>
+      
+      <div class="stars-container">
+        @for (star of [1, 2, 3, 4, 5]; track star) {
+          <button 
+            type="button"
+            class="star-btn"
+            [class.active]="star <= currentScore()"
+            (click)="setScore(star)"
+            (mouseenter)="hoverScore.set(star)"
+            (mouseleave)="hoverScore.set(0)">
+            ★
+          </button>
+        }
+      </div>
+      
+      <div class="comment-group mt-4">
+        <label for="comment">Leave a comment (Optional)</label>
+        <textarea 
+          id="comment" 
+          class="form-control" 
+          rows="3" 
+          [value]="comment()"
+          (input)="updateComment($event)"
+          placeholder="Tell us what you loved..."></textarea>
+      </div>
+    </div>
+    
+    <div class="modal-footer mt-4">
+      <button class="btn btn-ghost" (click)="close.emit()" [disabled]="submitting()">Skip</button>
+      <button class="btn btn-primary" (click)="submit()" [disabled]="currentScore() === 0 || submitting()">
+        @if (submitting()) {
+          Submitting...
+        } @else {
+          Submit Rating
+        }
+      </button>
+    </div>
+  </div>
+</div>
+}
