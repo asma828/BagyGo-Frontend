@@ -19,7 +19,7 @@ export const routes: Routes = [
     canActivate: [guestGuard],
     children: [
       { path: '', redirectTo: 'login', pathMatch: 'full' },
-      { path: 'login',    loadComponent: () => import('./features/auth/login').then(m => m.LoginComponent),       title: 'Login — BagyGo' },
+      { path: 'login', loadComponent: () => import('./features/auth/login').then(m => m.LoginComponent), title: 'Login — BagyGo' },
       { path: 'register', loadComponent: () => import('./features/auth/register').then(m => m.RegisterComponent), title: 'Register — BagyGo' }
     ]
   },
@@ -32,6 +32,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'sender', pathMatch: 'full' },
+
 
       // ── SENDER ──────────────────────────────────────────
       {
@@ -53,10 +54,28 @@ export const routes: Routes = [
         title: 'New Request — BagyGo'
       },
       {
+        path: 'sender/find-transport',
+        loadComponent: () => import('./features/dashboard/sender/find-transport/find-transport')
+          .then(m => m.FindTransportComponent),
+        title: 'Find Transport — BagyGo'
+      },
+      {
         path: 'sender/requests/:id',
         loadComponent: () => import('./features/dashboard/sender/my-requests/request-detail/request-detail')
           .then(m => m.RequestDetailComponent),
         title: 'Request Detail — BagyGo'
+      },
+      {
+        path: 'sender/payment/success',
+        loadComponent: () => import('./features/dashboard/sender/payment/payment-success/payment-success')
+          .then(m => m.PaymentSuccessComponent),
+        title: 'Payment Success — BagyGo'
+      },
+      {
+        path: 'sender/payment/cancel',
+        loadComponent: () => import('./features/dashboard/sender/payment/payment-cancel/payment-cancel')
+          .then(m => m.PaymentCancelComponent),
+        title: 'Payment Cancelled — BagyGo'
       },
 
       // ── TRANSPORTER ─────────────────────────────────────
@@ -115,6 +134,41 @@ export const routes: Routes = [
         loadComponent: () => import('./features/dashboard/sender/settings/settings')
           .then(m => m.SettingsComponent),
         title: 'Settings — BagyGo'
+      },
+    ]
+  },
+
+  // ── Admin Panel ──────────────────────────────────────────
+  {
+    path: 'admin',
+    loadComponent: () => import('./features/dashboard/admin/admin-layout')
+      .then(m => m.AdminLayoutComponent),
+    canActivate: [authGuard], // Should ideally be adminGuard
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./features/dashboard/admin/admin-dashboard/admin-dashboard')
+          .then(m => m.AdminDashboardComponent),
+        title: 'Admin Dashboard — BagyGo'
+      },
+      {
+        path: 'users',
+        loadComponent: () => import('./features/dashboard/admin/users/user-list')
+          .then(m => m.UserListComponent),
+        title: 'User Management — BagyGo'
+      },
+      {
+        path: 'verifications',
+        loadComponent: () => import('./features/dashboard/admin/verifications/verification-list')
+          .then(m => m.VerificationListComponent),
+        title: 'Transporter Verification — BagyGo'
+      },
+      {
+        path: 'monitoring',
+        loadComponent: () => import('./features/dashboard/admin/monitoring/monitoring-view')
+          .then(m => m.MonitoringViewComponent),
+        title: 'Platform Monitoring — BagyGo'
       },
     ]
   },
