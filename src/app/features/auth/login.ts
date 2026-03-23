@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
 
@@ -20,11 +20,21 @@ export class LoginComponent {
   constructor(
     private fb: FormBuilder,
     private auth: AuthService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.form = this.fb.group({
       email:    ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
+    });
+
+    // Check for error query param
+    this.route.queryParams.subscribe(params => {
+      if (params['error'] === 'banned') {
+        this.error.set('Your account has been banned by the admin.');
+      } else if (params['error'] === 'unverified') {
+        this.error.set('Your account must be verified first.');
+      }
     });
   }
 
@@ -41,7 +51,11 @@ export class LoginComponent {
       next: (res) => {
         this.loading.set(false);
         const role = res.user.role;
-        this.router.navigate([role === 'TRANSPORTEUR' ? '/dashboard/transporter' : '/dashboard/sender']);
+        if (role === 'ADMIN') {
+          this.router.navigate(['/admin']);
+        } else {
+          this.router.navigate([role === 'TRANSPORTEUR' ? '/dashboard/transporter' : '/dashboard/sender']);
+        }
       },
       error: (err) => {
         this.loading.set(false);
