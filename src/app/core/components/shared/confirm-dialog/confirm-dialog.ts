@@ -24,9 +24,9 @@ export class ConfirmDialogComponent {
 
   icons: Record<DialogVariant, string> = {
     danger:  '🗑️',
-    warning: '⚠️',
+    warning: '<i class="fa-solid fa-triangle-exclamation text-warning"></i>',
     info:    'ℹ️',
-    success: '✅'
+    success: '<i class="fa-solid fa-circle-check text-success"></i>'
   };
 
   get icon() { return this.icons[this.variant]; }
