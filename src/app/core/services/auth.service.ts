@@ -24,6 +24,9 @@ export class AuthService {
   readonly isLoggedIn     = computed(() => !!this._token() && !this.isTokenExpired());
   readonly isExpéditeur   = computed(() => this._currentUser()?.role === 'EXPEDITEUR');
   readonly isTransporteur = computed(() => this._currentUser()?.role === 'TRANSPORTEUR');
+  readonly isAdmin        = computed(() => this._currentUser()?.role === 'ADMIN');
+  readonly isVerified     = computed(() => !!this._currentUser()?.isVerified);
+  readonly isBanned       = computed(() => !!this._currentUser()?.isBanned);
 
   // ── Public methods ────────────────────────────────────
   login(req: LoginRequest) {
@@ -35,7 +38,6 @@ export class AuthService {
 
   register(req: RegisterRequest) {
     return this.http.post<AuthResponse>(`${this.API}/register`, req).pipe(
-      tap(res => this.setSession(res)),
       catchError(err => throwError(() => err))
     );
   }
