@@ -5,7 +5,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 import { RatingService } from '../../../../core/services/rating.service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { AuthService } from '../../../../core/services/auth.service';
-import { Rating, RatingSummary } from '../../../../core/models';
+import { Rating, RatingSummary, User } from '../../../../core/models';
 
 @Component({
   selector: 'app-ratings',
@@ -15,15 +15,19 @@ import { Rating, RatingSummary } from '../../../../core/models';
   styleUrls: ['./ratings.scss']
 })
 export class RatingsComponent implements OnInit {
-  loading   = signal(true);
-  summary   = signal<RatingSummary | null>(null);
-  ratings   = signal<Rating[]>([]);
-get user() {
-  return this.auth.currentUser();
-}
+  loading = signal(true);
+  summary = signal<RatingSummary | null>(null);
+  ratings = signal<Rating[]>([]);
+  ratableTransporters = signal<User[]>([]);
+
+  get user() {
+    return this.auth.currentUser();
+  }
+
   // Give a rating modal
   showGiveRating = signal(false);
-  submitting     = signal(false);
+  selectedTransporter = signal<User | null>(null);
+  submitting = signal(false);
   giveForm: FormGroup;
   hoverStar = signal(0);
   selectedStar = signal(0);
@@ -38,8 +42,8 @@ get user() {
   ) {
     this.giveForm = this.fb.group({
       toUserId: [null, Validators.required],
-      score:    [null, [Validators.required, Validators.min(1), Validators.max(5)]],
-      comment:  ['', Validators.maxLength(400)]
+      score: [null, [Validators.required, Validators.min(1), Validators.max(5)]],
+      comment: ['', Validators.maxLength(400)]
     });
   }
 
@@ -49,12 +53,26 @@ get user() {
     this.loading.set(true);
     this.ratingSvc.getMySummary().subscribe({
       next: (s) => { this.summary.set(s); },
-      error: () => {}
+      error: () => { }
     });
     this.ratingSvc.getMyRatings().subscribe({
       next: (r) => { this.ratings.set(r); this.loading.set(false); },
       error: () => { this.loading.set(false); }
     });
+    this.ratingSvc.getRatableTransporters().subscribe({
+      next: (t) => this.ratableTransporters.set(t),
+      error: () => { }
+    });
+  }
+
+  openRateModal(transporter: User) {
+    this.selectedTransporter.set(transporter);
+    this.giveForm.patchValue({ toUserId: transporter.id });
+    this.selectedStar.set(0);
+    this.hoverStar.set(0);
+    this.giveForm.get('score')?.reset();
+    this.giveForm.get('comment')?.reset();
+    this.showGiveRating.set(true);
   }
 
   // ── Distribution bar width ────────────────────────────
@@ -82,6 +100,7 @@ get user() {
       next: () => {
         this.submitting.set(false);
         this.showGiveRating.set(false);
+        this.selectedTransporter.set(null);
         this.giveForm.reset();
         this.selectedStar.set(0);
         this.toast.success('Rating submitted! ⭐');
@@ -99,7 +118,7 @@ get user() {
   }
 
   // Render filled/half/empty stars for the summary average
-  filledStars   = computed(() => Math.floor(this.summary()?.average ?? 0));
-  hasHalfStar   = computed(() => (this.summary()?.average ?? 0) % 1 >= 0.5);
-  emptyStars    = computed(() => 5 - this.filledStars() - (this.hasHalfStar() ? 1 : 0));
+  filledStars = computed(() => Math.floor(this.summary()?.average ?? 0));
+  hasHalfStar = computed(() => (this.summary()?.average ?? 0) % 1 >= 0.5);
+  emptyStars = computed(() => 5 - this.filledStars() - (this.hasHalfStar() ? 1 : 0));
 }

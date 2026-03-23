@@ -4,14 +4,44 @@
   <div class="page-header animate-fade-up">
     <div>
       <h1 class="page-title">My Ratings</h1>
-      <p class="page-subtitle">Your reputation in the BagyGo community.</p>
+      <p class="page-subtitle">Your reputation and your delivery history.</p>
     </div>
-    <button class="btn btn-primary" (click)="showGiveRating.set(true)">+ Rate someone</button>
   </div>
 
   @if (loading()) {
     <div class="loader-wrap"><div class="spinner"></div></div>
   } @else {
+
+    <!-- Transporters to Rate -->
+    <div class="rate-section animate-fade-up delay-50">
+      <h3 class="section-title">⭐ Rate a Transporter</h3>
+      <p class="section-sub">These transporters accepted your requests. Share your experience!</p>
+
+      @if (ratableTransporters().length === 0) {
+        <div class="empty-inline">
+          <span><i class="fa-solid fa-box"></i></span>
+          <p>No transporters to rate yet. Once a transporter accepts your request, they'll appear here.</p>
+        </div>
+      } @else {
+        <div class="ratable-grid">
+          @for (transporter of ratableTransporters(); track transporter.id) {
+            <div class="ratable-card">
+              <div class="rc-avatar"
+                [style.background]="'linear-gradient(135deg,' + (transporter.id % 2 === 0 ? '#FF6B35,#FFD166' : '#2EC4B6,#4FD8CC') + ')'">
+                {{ transporter.firstName[0] }}{{ transporter.lastName[0] }}
+              </div>
+              <div class="rc-info">
+                <div class="rc-name">{{ transporter.firstName }} {{ transporter.lastName }}</div>
+                <div class="rc-meta">⭐ {{ transporter.rating | number:'1.1-1' }} · {{ transporter.totalDeliveries }} deliveries</div>
+              </div>
+              <button class="btn btn-primary btn-sm" (click)="openRateModal(transporter)">
+                Rate ⭐
+              </button>
+            </div>
+          }
+        </div>
+      }
+    </div>
 
     <!-- Summary hero -->
     @if (summary()) {
@@ -64,7 +94,7 @@
 
     <!-- Ratings list -->
     <div class="ratings-section animate-fade-up delay-200">
-      <h3 class="section-title">All reviews</h3>
+      <h3 class="section-title">All reviews I received</h3>
 
       @if (ratings().length === 0) {
         <div class="empty-ratings">
@@ -111,22 +141,25 @@
     <div class="modal-card animate-scale-in" (click)="$event.stopPropagation()" [formGroup]="giveForm">
 
       <div class="modal-header">
-        <h3>Rate someone</h3>
+        <h3>Rate {{ selectedTransporter()?.firstName }} {{ selectedTransporter()?.lastName }}</h3>
         <button class="modal-close" (click)="showGiveRating.set(false)">✕</button>
       </div>
 
       <div class="modal-body">
 
-        <!-- User ID field -->
-        <div class="mf-field">
-          <label>User ID to rate</label>
-          <div class="mf-input-wrap">
-            <span>👤</span>
-            <input type="number" formControlName="toUserId" placeholder="Enter user ID"
-              [class.invalid]="giveForm.get('toUserId')!.invalid && giveForm.get('toUserId')!.touched" />
+        <!-- Transporter info (pre-filled) -->
+        @if (selectedTransporter()) {
+          <div class="ratable-card mb-4" style="margin-bottom:1rem;">
+            <div class="rc-avatar"
+              [style.background]="'linear-gradient(135deg,' + (selectedTransporter()!.id % 2 === 0 ? '#FF6B35,#FFD166' : '#2EC4B6,#4FD8CC') + ')'">
+              {{ selectedTransporter()!.firstName[0] }}{{ selectedTransporter()!.lastName[0] }}
+            </div>
+            <div class="rc-info">
+              <div class="rc-name">{{ selectedTransporter()!.firstName }} {{ selectedTransporter()!.lastName }}</div>
+              <div class="rc-meta">⭐ {{ selectedTransporter()!.rating | number:'1.1-1' }}</div>
+            </div>
           </div>
-          <p class="mf-hint">You can find the User ID on any user's profile page.</p>
-        </div>
+        }
 
         <!-- Star picker -->
         <div class="mf-field">
@@ -155,7 +188,7 @@
         <div class="mf-field">
           <label>Comment <span class="optional">(optional)</span></label>
           <textarea formControlName="comment" rows="3" maxlength="400"
-            placeholder="Share your experience with this person…"></textarea>
+            placeholder="Share your experience with this transporter…"></textarea>
           <span class="char-count">{{ giveForm.get('comment')!.value?.length ?? 0 }}/400</span>
         </div>
 
