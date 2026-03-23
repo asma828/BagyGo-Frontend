@@ -1,35 +1,60 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { BaggageRequest, CreateBaggageRequest } from '../models';
+import { BaggageRequest } from '../models';
 
-@Injectable({ providedIn: 'root' })
+export interface RespondToRequestRequest {
+  departureDate: string;
+  estimatedArrival: string;
+  pricePerKg: number;
+  notes?: string;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
 export class BaggageRequestService {
-  private readonly API = `${environment.apiUrl}/requests`;
   private http = inject(HttpClient);
+  private apiUrl = `${environment.apiUrl}/requests`;
 
-  /** POST /api/requests — sender creates a new request */
-  create(payload: CreateBaggageRequest) {
-    return this.http.post<BaggageRequest>(this.API, payload);
+  getMine(): Observable<BaggageRequest[]> {
+    return this.http.get<BaggageRequest[]>(this.apiUrl);
   }
 
-  /** GET /api/requests/my — sender's own requests */
-  getMine() {
-    return this.http.get<BaggageRequest[]>(`${this.API}/my`);
+  getOpen(): Observable<BaggageRequest[]> {
+    return this.http.get<BaggageRequest[]>(`${this.apiUrl}/open`);
   }
 
-  /** GET /api/requests/open — public open requests (for transporters) */
-  getOpen() {
-    return this.http.get<BaggageRequest[]>(`${this.API}/open`);
+  getForTransporter(): Observable<BaggageRequest[]> {
+    return this.http.get<BaggageRequest[]>(`${this.apiUrl}/transporter`);
   }
 
-  /** GET /api/requests/:id */
-  getById(id: number) {
-    return this.http.get<BaggageRequest>(`${this.API}/${id}`);
+  getById(id: number): Observable<BaggageRequest> {
+    return this.http.get<BaggageRequest>(`${this.apiUrl}/${id}`);
   }
 
-  /** PATCH /api/requests/:id/cancel */
-  cancel(id: number) {
-    return this.http.patch<BaggageRequest>(`${this.API}/${id}/cancel`, {});
+  respond(id: number, req: RespondToRequestRequest): Observable<BaggageRequest> {
+    return this.http.post<BaggageRequest>(`${this.apiUrl}/${id}/respond`, req);
+  }
+
+  accept(id: number): Observable<BaggageRequest> {
+    return this.http.patch<BaggageRequest>(`${this.apiUrl}/${id}/accept`, {});
+  }
+
+  reject(id: number): Observable<BaggageRequest> {
+    return this.http.patch<BaggageRequest>(`${this.apiUrl}/${id}/reject`, {});
+  }
+
+  create(req: any): Observable<BaggageRequest> {
+    return this.http.post<BaggageRequest>(this.apiUrl, req);
+  }
+
+  updateStatus(id: number, status: string): Observable<BaggageRequest> {
+    return this.http.patch<BaggageRequest>(`${this.apiUrl}/${id}/status?status=${status}`, {});
+  }
+
+  cancel(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
   }
 }
