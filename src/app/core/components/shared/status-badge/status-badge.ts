@@ -17,7 +17,7 @@ interface BadgeConfig {
   template: `
     <span class="status-badge" [class]="config.cls + ' status-badge--' + size">
       <span class="status-badge__dot"></span>
-      @if (showIcon) { <span class="status-badge__icon">{{ config.icon }}</span> }
+      @if (showIcon) { <span class="status-badge__icon" [innerHTML]="config.icon"></span> }
       <span class="status-badge__label">{{ config.label }}</span>
     </span>
   `,
@@ -32,19 +32,19 @@ export class StatusBadgeComponent {
     // Request statuses
     OPEN:       { label: 'Open',       icon: '🟢', cls: 'badge--open'      },
     PENDING:    { label: 'Pending',    icon: '⏳', cls: 'badge--pending'   },
-    ACCEPTED:   { label: 'Accepted',   icon: '✅', cls: 'badge--accepted'  },
-    IN_TRANSIT: { label: 'In Transit', icon: '🚛', cls: 'badge--transit'   },
+    ACCEPTED:   { label: 'Accepted',   icon: '<i class="fa-solid fa-circle-check text-success"></i>', cls: 'badge--accepted'  },
+    IN_TRANSIT: { label: 'In Transit', icon: '<i class="fa-solid fa-truck-fast"></i>', cls: 'badge--transit'   },
     DELIVERED:  { label: 'Delivered',  icon: '📬', cls: 'badge--delivered' },
-    CANCELLED:  { label: 'Cancelled',  icon: '❌', cls: 'badge--cancelled' },
+    CANCELLED:  { label: 'Cancelled',  icon: '<i class="fa-solid fa-circle-xmark text-danger"></i>', cls: 'badge--cancelled' },
 
     // Offer statuses
     COUNTERED:  { label: 'Countered',  icon: '🔄', cls: 'badge--pending'   },
     DECLINED:   { label: 'Declined',   icon: '🚫', cls: 'badge--cancelled' },
 
     // Trip statuses
-    FULL:        { label: 'Full',        icon: '🔴', cls: 'badge--cancelled' },
-    IN_PROGRESS: { label: 'In Progress', icon: '🚗', cls: 'badge--transit'   },
-    COMPLETED:   { label: 'Completed',   icon: '🏁', cls: 'badge--delivered' },
+    FULL:        { label: 'Full',        icon: '<i class="fa-solid fa-circle text-danger"></i>', cls: 'badge--cancelled' },
+    IN_PROGRESS: { label: 'In Progress', icon: '<i class="fa-solid fa-car"></i>', cls: 'badge--transit'   },
+    COMPLETED:   { label: 'Completed',   icon: '<i class="fa-solid fa-flag-checkered"></i>', cls: 'badge--delivered' },
   };
 
   get config(): BadgeConfig {

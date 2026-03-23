@@ -10,7 +10,7 @@ import { RouterLink } from '@angular/router';
     <div class="empty-state" [class]="'empty-state--' + size">
       <div class="empty-state__illustration">
         <div class="es-circle">
-          <span class="es-icon">{{ icon }}</span>
+          <span class="es-icon" [innerHTML]="icon"></span>
         </div>
       </div>
       <h3 class="empty-state__title">{{ title }}</h3>
@@ -28,7 +28,7 @@ import { RouterLink } from '@angular/router';
   styleUrls: ['./empty-state.scss']
 })
 export class EmptyStateComponent {
-  @Input() icon        = '📭';
+  @Input() icon        = '<i class="fa-solid fa-box-open"></i>';
   @Input() title       = 'Nothing here yet';
   @Input() description = '';
   @Input() actionLabel = '';
