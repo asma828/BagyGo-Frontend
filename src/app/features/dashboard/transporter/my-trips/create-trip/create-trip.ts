@@ -33,9 +33,9 @@ export class CreateTripComponent {
   }
 
   steps = [
-    { num: 1, label: 'Route',   icon: '📍' },
-    { num: 2, label: 'Details', icon: '📋' },
-    { num: 3, label: 'Review',  icon: '✅' },
+    { num: 1, label: 'Route',   icon: '<i class="fa-solid fa-location-dot"></i>' },
+    { num: 2, label: 'Details', icon: '<i class="fa-solid fa-clipboard-list"></i>' },
+    { num: 3, label: 'Review',  icon: '<i class="fa-solid fa-circle-check text-success"></i>' },
   ];
 
   constructor(
@@ -88,7 +88,7 @@ export class CreateTripComponent {
       next: (trip) => {
         this.loading.set(false);
         this.submitted.set(true);
-        this.toast.success('Trip posted! 🚗', 'Senders can now find your trip and make requests.');
+        this.toast.success('Trip posted! <i class="fa-solid fa-car"></i>', 'Senders can now find your trip and make requests.');
         setTimeout(() => this.router.navigate(['/dashboard/transporter/trips', trip.id]), 1800);
       },
       error: (err) => {

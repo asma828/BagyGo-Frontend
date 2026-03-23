@@ -19,7 +19,7 @@
   <div class="step-progress animate-fade-up delay-100">
     @for (s of steps; track s.num) {
       <div class="sp-item" [class.active]="step() === s.num" [class.done]="step() > s.num">
-        <div class="sp-circle">@if (step() > s.num) { ✓ } @else { {{ s.icon }} }</div>
+        <div class="sp-circle">@if (step() > s.num) { ✓ } @else { <span [innerHTML]="s.icon"></span> }</div>
         <span class="sp-label">{{ s.label }}</span>
       </div>
       @if (!$last) {
@@ -40,7 +40,7 @@
             <div class="form-field">
               <label>Departure city</label>
               <div class="select-wrap">
-                <span class="select-icon">🚀</span>
+                <span class="select-icon"><i class="fa-solid fa-paper-plane"></i></span>
                 <select formControlName="departureCity" [class.invalid]="f['departureCity'].invalid && f['departureCity'].touched">
                   <option value="" disabled selected>Select city...</option>
                   @for (city of cities; track city) { <option [value]="city">{{ city }}</option> }
@@ -50,7 +50,7 @@
             <div class="form-field">
               <label>Arrival city</label>
               <div class="select-wrap">
-                <span class="select-icon">🏁</span>
+                <span class="select-icon"><i class="fa-solid fa-flag-checkered"></i></span>
                 <select formControlName="arrivalCity" [class.invalid]="f['arrivalCity'].invalid && f['arrivalCity'].touched">
                   <option value="" disabled selected>Select city...</option>
                   @for (city of cities; track city) { <option [value]="city">{{ city }}</option> }
@@ -75,7 +75,7 @@
             <div class="form-field">
               <label>Estimated arrival <span class="optional">(optional)</span></label>
               <div class="input-wrap">
-                <span class="input-icon">🏁</span>
+                <span class="input-icon"><i class="fa-solid fa-flag-checkered"></i></span>
                 <input type="datetime-local" formControlName="estimatedArrival" [min]="minDateTime" />
               </div>
             </div>
@@ -106,7 +106,7 @@
             <div class="form-field">
               <label>Available space (kg)</label>
               <div class="input-wrap">
-                <span class="input-icon">⚖️</span>
+                <span class="input-icon"><i class="fa-solid fa-weight-scale"></i></span>
                 <input type="number" formControlName="availableSpace" placeholder="e.g. 20"
                   min="1" max="500" step="0.5"
                   [class.invalid]="f['availableSpace'].invalid && f['availableSpace'].touched"
