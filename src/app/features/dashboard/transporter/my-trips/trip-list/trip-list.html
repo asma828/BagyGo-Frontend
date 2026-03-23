@@ -31,8 +31,7 @@
   <!-- Filters -->
   <div class="filter-tabs animate-fade-up delay-200">
     @for (f of filters; track f.value) {
-      <button class="filter-tab" [class.active]="activeFilter() === f.value" (click)="activeFilter.set(f.value)">
-        {{ f.label }}
+      <button class="filter-tab" [class.active]="activeFilter() === f.value" (click)="activeFilter.set(f.value)" [innerHTML]="f.label">
       </button>
     }
   </div>
@@ -42,7 +41,7 @@
     <div class="loader-wrap"><div class="spinner"></div></div>
   } @else if (filtered().length === 0) {
     <app-empty-state
-      icon="🚗"
+      icon='<i class="fa-solid fa-car"></i>'
       title="No trips found"
       [description]="activeFilter() === 'ALL' ? 'Post your first trip to start receiving baggage requests.' : 'No trips match this filter.'"
       [actionLabel]="activeFilter() === 'ALL' ? 'Post a Trip' : ''"
@@ -58,7 +57,7 @@
               <span class="tc-city">{{ trip.departureCity }}</span>
               <div class="tc-path">
                 <div class="tc-path-line"></div>
-                <span>🚗</span>
+                <span><i class="fa-solid fa-car"></i></span>
               </div>
               <span class="tc-city">{{ trip.arrivalCity }}</span>
             </div>
@@ -66,9 +65,9 @@
           </div>
 
           <div class="tc-meta">
-            <span class="tc-chip">📅 {{ formatDate(trip.departureDate) }}</span>
-            <span class="tc-chip">⚖️ {{ trip.availableSpace }} kg free</span>
-            <span class="tc-chip tc-chip--price">💰 {{ trip.pricePerKg }} MAD/kg</span>
+            <span class="tc-chip"><i class="fa-regular fa-calendar"></i> {{ formatDate(trip.departureDate) }}</span>
+            <span class="tc-chip"><i class="fa-solid fa-weight-scale"></i> {{ trip.availableSpace }} kg free</span>
+            <span class="tc-chip tc-chip--price"><i class="fa-solid fa-sack-dollar"></i> {{ trip.pricePerKg }} MAD/kg</span>
           </div>
 
           @if (trip.notes) {

@@ -27,8 +27,8 @@ export class TripListComponent implements OnInit {
   filters: { label: string; value: FilterStatus }[] = [
     { label: 'All',          value: 'ALL'         },
     { label: '🟢 Open',      value: 'OPEN'        },
-    { label: '🚗 In Progress',value: 'IN_PROGRESS' },
-    { label: '🏁 Completed', value: 'COMPLETED'   },
+    { label: '<i class="fa-solid fa-car"></i> In Progress',value: 'IN_PROGRESS' },
+    { label: '<i class="fa-solid fa-flag-checkered"></i> Completed', value: 'COMPLETED'   },
   ];
 
   filtered = computed(() => {
