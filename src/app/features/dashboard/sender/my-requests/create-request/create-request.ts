@@ -4,11 +4,12 @@ import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { BaggageRequestService } from '../../../../../core/services/baggage-request.service';
 import { ToastService } from '../../../../../core/services/toast.service';
+import { ActivatedRoute } from '@angular/router';
 
 const MOROCCAN_CITIES = [
-  'Casablanca','Rabat','Marrakech','Fès','Tanger','Agadir',
-  'Meknès','Oujda','Kenitra','Tétouan','Safi','Mohammedia',
-  'Khouribga','El Jadida','Béni Mellal','Nador','Laâyoune','Settat'
+  'Casablanca', 'Rabat', 'Marrakech', 'Fès', 'Tanger', 'Agadir',
+  'Meknès', 'Oujda', 'Kenitra', 'Tétouan', 'Safi', 'Mohammedia',
+  'Khouribga', 'El Jadida', 'Béni Mellal', 'Nador', 'Laâyoune', 'Settat'
 ];
 
 @Component({
@@ -20,8 +21,8 @@ const MOROCCAN_CITIES = [
 })
 export class CreateRequestComponent {
   form: FormGroup;
-  loading   = signal(false);
-  step      = signal<1 | 2 | 3>(1);
+  loading = signal(false);
+  step = signal<1 | 2 | 3>(1);
   submitted = signal(false);
 
   cities = MOROCCAN_CITIES;
@@ -30,28 +31,48 @@ export class CreateRequestComponent {
   today = new Date().toISOString().split('T')[0];
 
   steps = [
-    { num: 1, label: 'Route',   icon: '📍' },
-    { num: 2, label: 'Baggage', icon: '📦' },
-    { num: 3, label: 'Review',  icon: '✅' },
+    { num: 1, label: 'Route', icon: '<i class="fa-solid fa-location-dot"></i>' },
+    { num: 2, label: 'Baggage', icon: '<i class="fa-solid fa-box"></i>' },
+    { num: 3, label: 'Review', icon: '<i class="fa-solid fa-circle-check text-success"></i>' },
   ];
 
   constructor(
     private fb: FormBuilder,
     private requestSvc: BaggageRequestService,
     private router: Router,
+    private route: ActivatedRoute,
     private toast: ToastService
   ) {
     this.form = this.fb.group({
       // Step 1 — Route
       departureCity: ['', Validators.required],
-      arrivalCity:   ['', Validators.required],
-      desiredDate:   ['', Validators.required],
+      arrivalCity: ['', Validators.required],
+      desiredDate: ['', Validators.required],
 
       // Step 2 — Baggage
-      weightKg:      [null, [Validators.required, Validators.min(0.5), Validators.max(100)]],
+      weightKg: [null, [Validators.required, Validators.min(0.5), Validators.max(100)]],
       proposedPrice: [null, [Validators.required, Validators.min(1)]],
-      description:   ['', [Validators.required, Validators.minLength(10), Validators.maxLength(300)]],
-      isFragile:     [false],
+      description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(300)]],
+      isFragile: [false],
+      tripId: [null],
+      message: [''],
+    });
+  }
+
+  ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      if (params['tripId']) {
+        this.form.patchValue({
+          tripId: +params['tripId'],
+          departureCity: params['pickupCity'],
+          arrivalCity: params['deliveryCity'],
+          weightKg: params['weight'] ? +params['weight'] : null,
+          desiredDate: params['date'] || ''
+        });
+        if (params['pickupCity'] && params['deliveryCity'] && params['date']) {
+          this.step.set(2);
+        }
+      }
     });
   }
 
@@ -66,8 +87,8 @@ export class CreateRequestComponent {
   // Step 2 fields valid?
   get step2Valid(): boolean {
     return this.f['weightKg'].valid &&
-           this.f['proposedPrice'].valid &&
-           this.f['description'].valid;
+      this.f['proposedPrice'].valid &&
+      this.f['description'].valid;
   }
 
   nextStep() {
@@ -81,7 +102,15 @@ export class CreateRequestComponent {
   }
 
   onSubmit() {
-    if (this.form.invalid || this.loading()) return;
+    if (this.loading()) return;
+
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.toast.error('Form invalid', 'Please check all required fields.');
+      console.error('Form invalid:', this.form.errors, this.form.value);
+      return;
+    }
+
     this.loading.set(true);
 
     this.requestSvc.create(this.form.value).subscribe({

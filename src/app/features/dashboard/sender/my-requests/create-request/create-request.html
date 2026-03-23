@@ -10,7 +10,7 @@
   <!-- ── Success state ── -->
   @if (submitted()) {
     <div class="success-card animate-scale-in">
-      <div class="sc-icon">🎉</div>
+      <div class="sc-icon"><i class="fa-solid fa-champagne-glasses"></i></div>
       <h2>Request posted!</h2>
       <p>Transporters will start making offers soon. Redirecting to your request…</p>
       <div class="sc-loader"></div>
@@ -22,7 +22,7 @@
     @for (s of steps; track s.num) {
       <div class="sp-item" [class.active]="step() === s.num" [class.done]="step() > s.num">
         <div class="sp-circle">
-          @if (step() > s.num) { ✓ } @else { {{ s.icon }} }
+          @if (step() > s.num) { ✓ } @else { <span [innerHTML]="s.icon"></span> }
         </div>
         <span class="sp-label">{{ s.label }}</span>
       </div>
@@ -39,13 +39,13 @@
       <!-- ══ STEP 1 — Route ══ -->
       @if (step() === 1) {
         <div class="step-content animate-fade-up">
-          <h3 class="step-title">📍 Where is it going?</h3>
+          <h3 class="step-title"><i class="fa-solid fa-location-dot"></i> Where is it going?</h3>
 
           <div class="form-row">
             <div class="form-field">
               <label>Departure city</label>
               <div class="select-wrap">
-                <span class="select-icon">🚀</span>
+                <span class="select-icon"><i class="fa-solid fa-paper-plane"></i></span>
                 <select formControlName="departureCity"
                   [class.invalid]="f['departureCity'].invalid && f['departureCity'].touched">
                   <option value="" disabled selected>Select city...</option>
@@ -62,7 +62,7 @@
             <div class="form-field">
               <label>Arrival city</label>
               <div class="select-wrap">
-                <span class="select-icon">🏁</span>
+                <span class="select-icon"><i class="fa-solid fa-flag-checkered"></i></span>
                 <select formControlName="arrivalCity"
                   [class.invalid]="f['arrivalCity'].invalid && f['arrivalCity'].touched">
                   <option value="" disabled selected>Select city...</option>
@@ -78,13 +78,13 @@
           </div>
 
           @if (sameCityError()) {
-            <div class="alert-warn">⚠️ Departure and arrival cities must be different.</div>
+            <div class="alert-warn"><i class="fa-solid fa-triangle-exclamation text-warning"></i> Departure and arrival cities must be different.</div>
           }
 
           <div class="form-field">
             <label>Desired shipping date</label>
             <div class="input-wrap">
-              <span class="input-icon">📅</span>
+              <span class="input-icon"><i class="fa-regular fa-calendar"></i></span>
               <input type="date" formControlName="desiredDate" [min]="today"
                 [class.invalid]="f['desiredDate'].invalid && f['desiredDate'].touched" />
             </div>
@@ -124,13 +124,13 @@
       <!-- ══ STEP 2 — Baggage ══ -->
       @if (step() === 2) {
         <div class="step-content animate-fade-up">
-          <h3 class="step-title">📦 Tell us about your baggage</h3>
+          <h3 class="step-title"><i class="fa-solid fa-box"></i> Tell us about your baggage</h3>
 
           <div class="form-row">
             <div class="form-field">
               <label>Weight (kg)</label>
               <div class="input-wrap">
-                <span class="input-icon">⚖️</span>
+                <span class="input-icon"><i class="fa-solid fa-weight-scale"></i></span>
                 <input type="number" formControlName="weightKg" placeholder="e.g. 5"
                   min="0.5" max="100" step="0.5"
                   [class.invalid]="f['weightKg'].invalid && f['weightKg'].touched"
@@ -146,12 +146,12 @@
                 Proposed price (MAD)
                 @if (suggestPrice() > 0) {
                   <button type="button" class="suggest-btn" (click)="applySuggestion()">
-                    💡 Suggest {{ suggestPrice() }} MAD
+                    <i class="fa-solid fa-lightbulb"></i> Suggest {{ suggestPrice() }} MAD
                   </button>
                 }
               </label>
               <div class="input-wrap">
-                <span class="input-icon">💰</span>
+                <span class="input-icon"><i class="fa-solid fa-sack-dollar"></i></span>
                 <input type="number" formControlName="proposedPrice" placeholder="e.g. 120"
                   min="1"
                   [class.invalid]="f['proposedPrice'].invalid && f['proposedPrice'].touched"
@@ -182,7 +182,7 @@
             <label class="toggle-label">
               <input type="checkbox" formControlName="isFragile" class="toggle-checkbox" />
               <div class="toggle-switch"></div>
-              <span>🔮 Mark as fragile / handle with care</span>
+              <span><i class="fa-solid fa-wine-glass"></i> Mark as fragile / handle with care</span>
             </label>
           </div>
 
@@ -203,7 +203,7 @@
       <!-- ══ STEP 3 — Review ══ -->
       @if (step() === 3) {
         <div class="step-content animate-fade-up">
-          <h3 class="step-title">✅ Review your request</h3>
+          <h3 class="step-title"><i class="fa-solid fa-circle-check text-success"></i> Review your request</h3>
 
           <div class="review-card">
             <!-- Route -->
@@ -230,28 +230,28 @@
             <!-- Details grid -->
             <div class="review-grid">
               <div class="review-item">
-                <span class="ri-icon">📅</span>
+                <span class="ri-icon"><i class="fa-regular fa-calendar"></i></span>
                 <div>
                   <div class="ri-label">Desired date</div>
                   <div class="ri-val">{{ f['desiredDate'].value }}</div>
                 </div>
               </div>
               <div class="review-item">
-                <span class="ri-icon">⚖️</span>
+                <span class="ri-icon"><i class="fa-solid fa-weight-scale"></i></span>
                 <div>
                   <div class="ri-label">Weight</div>
                   <div class="ri-val">{{ f['weightKg'].value }} kg</div>
                 </div>
               </div>
               <div class="review-item">
-                <span class="ri-icon">💰</span>
+                <span class="ri-icon"><i class="fa-solid fa-sack-dollar"></i></span>
                 <div>
                   <div class="ri-label">Your price</div>
                   <div class="ri-val ri-price">{{ f['proposedPrice'].value }} MAD</div>
                 </div>
               </div>
               <div class="review-item">
-                <span class="ri-icon">🔮</span>
+                <span class="ri-icon"><i class="fa-solid fa-wine-glass"></i></span>
                 <div>
                   <div class="ri-label">Fragile</div>
                   <div class="ri-val">{{ f['isFragile'].value ? 'Yes — handle with care' : 'No' }}</div>
