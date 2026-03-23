@@ -18,6 +18,17 @@
         @if (canCancel()) {
           <button class="btn btn-ghost btn-sm" (click)="cancelDialog.set(true)">Cancel Request</button>
         }
+        @if (request()!.status === 'ACCEPTED' || request()!.status === 'IN_TRANSIT' || request()!.status === 'DELIVERED') {
+          @if (!request()!.isPaid) {
+            <button class="btn btn-primary btn-sm" (click)="proceedToPayment()" [disabled]="payingId()">
+              {{ payingId() ? 'Processing...' : '💳 Proceed to Payment' }}
+            </button>
+          } @else if (request()!.status === 'DELIVERED') {
+            <button class="btn btn-success btn-sm" (click)="confirmDelivery()">✓ Confirm Delivery</button>
+          } @else if (request()!.isPaid) {
+             <span class="paid-badge"><i class="fa-solid fa-circle-check text-success"></i> Paid</span>
+          }
+        }
       </div>
     </div>
 
@@ -41,7 +52,7 @@
             </div>
             <div class="rh-path">
               <div class="rh-path-line"></div>
-              <span class="rh-path-icon">{{ request()!.isFragile ? '🔮' : '📦' }}</span>
+              <span [innerHTML]="request()!.isFragile ? '<i class=\'fa-solid fa-wine-glass\'></i>' : '<i class=\'fa-solid fa-box\'></i>'"></span>
             </div>
             <div class="rh-city rh-city--right">
               <div class="rh-dot rh-dot--to"></div>
@@ -54,31 +65,42 @@
           <div class="rh-price">{{ request()!.proposedPrice }} <span>MAD</span></div>
         </div>
 
+        @if (request()!.status === 'IN_TRANSIT' && request()!.trip?.currentLat) {
+          <div class="tracking-map animate-fade-up">
+            <h4 class="section-title"><i class="fa-solid fa-location-dot"></i> Live Tracking</h4>
+            <app-map 
+              [lat]="request()!.trip!.currentLat!" 
+              [lng]="request()!.trip!.currentLng!" 
+              markerLabel="Transporter Location"
+            />
+          </div>
+        }
+
         <!-- Details grid -->
         <div class="info-grid">
           <div class="info-card">
-            <span class="info-icon">📅</span>
+            <span class="info-icon"><i class="fa-regular fa-calendar"></i></span>
             <div class="info-body">
               <div class="info-label">Desired date</div>
               <div class="info-val">{{ formatDate(request()!.desiredDate) }}</div>
             </div>
           </div>
           <div class="info-card">
-            <span class="info-icon">⚖️</span>
+            <span class="info-icon"><i class="fa-solid fa-weight-scale"></i></span>
             <div class="info-body">
               <div class="info-label">Weight</div>
               <div class="info-val">{{ request()!.weightKg }} kg</div>
             </div>
           </div>
           <div class="info-card">
-            <span class="info-icon">🚛</span>
+            <span class="info-icon"><i class="fa-solid fa-truck-fast"></i></span>
             <div class="info-body">
               <div class="info-label">Offers received</div>
               <div class="info-val">{{ request()!.offersCount }}</div>
             </div>
           </div>
           <div class="info-card">
-            <span class="info-icon">🔮</span>
+            <span class="info-icon"><i class="fa-solid fa-wine-glass"></i></span>
             <div class="info-body">
               <div class="info-label">Fragile</div>
               <div class="info-val">{{ request()!.isFragile ? 'Yes' : 'No' }}</div>
@@ -114,7 +136,7 @@
           <!-- Pending offers first -->
           @if (pendingOffers.length > 0) {
             <div class="offers-section">
-              <div class="os-label">🔔 Awaiting your response</div>
+              <div class="os-label"><i class="fa-solid fa-bell text-warning"></i> Awaiting your response</div>
               @for (offer of pendingOffers; track offer.id) {
                 <app-offer-card
                   [offer]="offer"
@@ -140,7 +162,7 @@
 
           @if (offers.length === 0) {
             <app-empty-state
-              icon="📭" size="sm"
+              size="sm"
               title="No offers yet"
               description="Transporters will see your request and start making offers soon."
             />
