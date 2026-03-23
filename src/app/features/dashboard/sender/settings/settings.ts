@@ -21,8 +21,8 @@ get user() {
   profileForm: FormGroup;
 
   roleLabels: Record<string, string> = {
-    EXPEDITEUR:  '📦 Sender (Expéditeur)',
-    TRANSPORTEUR: '🚗 Transporter (Transporteur)'
+    EXPEDITEUR:  '<i class="fa-solid fa-box"></i> Sender (Expéditeur)',
+    TRANSPORTEUR: '<i class="fa-solid fa-car"></i> Transporter (Transporteur)'
   };
 
   constructor(
@@ -80,7 +80,7 @@ get user() {
       next: () => {
         this.saving.set(false);
         this.saved.set(true);
-        this.toast.success('Profile updated! ✅');
+        this.toast.success('Profile updated! <i class="fa-solid fa-circle-check text-success"></i>');
         setTimeout(() => this.saved.set(false), 3000);
       },
       error: (err) => {

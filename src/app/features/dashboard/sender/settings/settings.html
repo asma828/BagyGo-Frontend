@@ -17,23 +17,23 @@
         } @else {
           <div class="avatar-placeholder">{{ getInitials() }}</div>
         }
-        <div class="avatar-badge">{{ user?.role === 'EXPEDITEUR' ? '📦' : '🚗' }}</div>
+        <div class="avatar-badge" [innerHTML]="user?.role === 'EXPEDITEUR' ? '<i class=\'fa-solid fa-box\'></i>' : '<i class=\'fa-solid fa-car\'></i>'"></div>
       </div>
 
       <div class="profile-info">
         <div class="profile-name">{{ user?.firstName }} {{ user?.lastName }}</div>
-        <div class="profile-role">{{ roleLabels[user?.role ?? ''] }}</div>
+        <div class="profile-role" [innerHTML]="roleLabels[user?.role ?? '']"></div>
         <div class="profile-email">{{ user?.email }}</div>
       </div>
 
       <div class="profile-stats">
         <div class="pstat">
           <div class="pstat-val">{{ user?.rating | number:'1.1-1' }}</div>
-          <div class="pstat-lbl">⭐ Rating</div>
+          <div class="pstat-lbl"><i class="fa-solid fa-star text-warning"></i> Rating</div>
         </div>
         <div class="pstat">
           <div class="pstat-val">{{ user?.totalDeliveries }}</div>
-          <div class="pstat-lbl">📬 Deliveries</div>
+          <div class="pstat-lbl"><i class="fa-solid fa-box"></i> Deliveries</div>
         </div>
       </div>
 
@@ -74,7 +74,7 @@
         <div class="form-field">
           <label>Phone number</label>
           <div class="input-prefix-wrap">
-            <span class="input-prefix">📞</span>
+            <span class="input-prefix"><i class="fa-solid fa-phone"></i></span>
             <input formControlName="phone" type="tel" placeholder="+212 6XX XXX XXX"
               [class.invalid]="f['phone'].invalid && f['phone'].touched" />
           </div>
@@ -83,7 +83,7 @@
         <div class="form-field">
           <label>Avatar URL <span class="optional">(optional)</span></label>
           <div class="input-prefix-wrap">
-            <span class="input-prefix">🖼️</span>
+            <span class="input-prefix"><i class="fa-solid fa-image"></i></span>
             <input formControlName="avatarUrl" type="url" placeholder="https://your-image-url.com/avatar.jpg" />
           </div>
           @if (f['avatarUrl'].value) {
@@ -100,12 +100,12 @@
           <div class="readonly-grid">
             <div class="readonly-field">
               <label>Email</label>
-              <div class="readonly-value">{{ user?.email }} <span class="lock-icon">🔒</span></div>
+              <div class="readonly-value">{{ user?.email }} <span class="lock-icon"><i class="fa-solid fa-lock"></i></span></div>
               <span class="readonly-note">Contact support to change email.</span>
             </div>
             <div class="readonly-field">
               <label>Account type</label>
-              <div class="readonly-value">{{ roleLabels[user?.role ?? ''] }} <span class="lock-icon">🔒</span></div>
+              <div class="readonly-value" [innerHTML]="roleLabels[user?.role ?? ''] + ' <span class=\'lock-icon\'><i class=\'fa-solid fa-lock\'></i></span>'"></div>
               <span class="readonly-note">Role cannot be changed after registration.</span>
             </div>
           </div>
@@ -114,7 +114,7 @@
         <!-- Submit -->
         <div class="form-actions">
           @if (saved()) {
-            <div class="saved-badge animate-scale-in">✅ Saved successfully</div>
+            <div class="saved-badge animate-scale-in"><i class="fa-solid fa-circle-check text-success"></i> Saved successfully</div>
           }
           <button
             type="submit"
