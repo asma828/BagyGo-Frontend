@@ -16,7 +16,9 @@
 
     <!-- Type tag -->
     <div class="rc-tag" [class]="type === 'request' ? 'rc-tag--request' : 'rc-tag--trip'">
-      <span>{{ type === 'request' ? '📦' : '✈️' }}</span>
+      <span>
+        @if (type === 'request') { <i class="fa-solid fa-box"></i> } @else { <i class="fa-solid fa-plane"></i> }
+      </span>
       <span>{{ type === 'request' ? 'Request' : 'Trip' }}</span>
     </div>
 
@@ -41,7 +43,9 @@
         <div class="rc-path-dot"></div>
         <div class="rc-path-dot"></div>
       </div>
-      <span class="rc-path-icon">{{ type === 'request' ? '📦' : '🚗' }}</span>
+      <span class="rc-path-icon">
+        @if (type === 'request') { <i class="fa-solid fa-box"></i> } @else { <i class="fa-solid fa-car"></i> }
+      </span>
     </div>
 
     <div class="rc-city rc-city--right">
@@ -55,13 +59,13 @@
 
   <!-- ── Meta chips ── -->
   <div class="rc-meta">
-    <span class="rc-chip">📅 {{ date }}</span>
-    <span class="rc-chip">⚖️ {{ weightOrSpace }}</span>
+    <span class="rc-chip"><i class="fa-regular fa-calendar"></i> {{ date }}</span>
+    <span class="rc-chip"><i class="fa-solid fa-weight-scale"></i> {{ weightOrSpace }}</span>
     @if (isFragile) {
-      <span class="rc-chip rc-chip--danger">🔴 Fragile</span>
+      <span class="rc-chip rc-chip--danger"><i class="fa-solid fa-circle text-danger"></i> Fragile</span>
     }
     @if (type === 'request' && offersCount > 0) {
-      <span class="rc-chip rc-chip--accent">🚛 {{ offersCount }} offer{{ offersCount !== 1 ? 's' : '' }}</span>
+      <span class="rc-chip rc-chip--accent"><i class="fa-solid fa-truck-fast"></i> {{ offersCount }} offer{{ offersCount !== 1 ? 's' : '' }}</span>
     }
   </div>
 
