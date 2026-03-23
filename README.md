@@ -1,140 +1,95 @@
-# BagygoFrontend
+# 📦 BagyGo - Modern Parcel Transport Platform
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.3.
+BagyGo is a premium, community-driven platform that connects travelers (**Transporters**) with people needing to send packages (**Senders**). This repository contains the **Angular Frontend**, built with a focus on high performance, responsive design, and a seamless user experience.
 
-## Development server
+---
 
-To start a local development server, run:
+## 🚀 Key Features
 
+- **Multi-Role Dashboards**: Custom interfaces for Senders, Transporters, and Administrators.
+- **Trip Management**: Transporters can post travel schedules, available weight, and pricing.
+- **Smart Search**: Senders can find trips based on departure/arrival cities and dates.
+- **Baggage Requests**: Integrated workflow for senders to request transport and negotiate prices.
+- **Admin Monitoring**: Real-time overview of users, trips, requests, and payments.
+- **Real-time Notifications**: Instant updates for offer status changes and system alerts.
+- **Premium UI**: Modern aesthetics using Tailwind CSS, glassmorphism, and smooth animations.
+
+---
+
+## 🛠 Tech Stack
+
+- **Framework**: [Angular](https://angular.dev/) (latest version with Signals)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **State Management**: Angular Signals & RxJS
+- **Icons**: [FontAwesome 6](https://fontawesome.com/)
+- **Testing**: [Vitest](https://vitest.dev/)
+- **Build Tool**: Vite (underlying Angular CLI)
+
+---
+
+## 📂 Project Structure
+
+```text
+src/app/
+├── core/                # Singleton services, models, guards, and interceptors
+│   ├── interceptors/    # JWT & Error handling
+│   ├── services/       # API communication (Auth, Trip, Request, etc.)
+│   └── models/         # TypeScript interfaces & types
+├── shared/             # Reusable components (buttons, badges, modals)
+├── features/           # Module-based feature areas
+│   ├── auth/           # Login, Registration, Password Reset
+│   ├── dashboard/      # Role-based layouts and homes
+│   │   ├── admin/      # User management & Monitoring
+│   │   ├── sender/     # Find transport, My requests, Settings
+│   │   └── transporter/# Post trips, Browse requests, My trips
+│   └── landing/        # Public landing page
+└── app.routes.ts       # Centralized routing configuration
+```
+
+---
+
+## 📥 Installation & Setup
+
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v18.x or higher)
+- [Angular CLI](https://angular.dev/tools/cli) installed globally
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/asma828/BagyGo-Frontend.git
+cd BagyGo-Frontend
+```
+
+### 2. Install dependencies
+```bash
+npm install
+```
+
+### 3. Environment Configuration
+The application expects the backend to be running on `http://localhost:8080`. You can adjust configurations in `src/environments/`.
+
+### 4. Run Development Server
 ```bash
 ng serve
 ```
+Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+---
 
-## Code scaffolding
+## 🧪 Testing
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
+To run unit tests with Vitest:
 ```bash
 ng test
 ```
 
-## Running end-to-end tests
+---
 
-For end-to-end (e2e) testing, run:
+## 📄 License
 
-```bash
-ng e2e
-```
+This project is proprietary. All rights reserved.
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+---
 
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
-
-
-
-
-
-bagygo-frontend/src/
-├── index.html
-├── main.ts
-├── styles.scss                          ✅ done
-│
-└── app/
-    ├── app.ts                           ✅ done
-    ├── app.config.ts                    ✅ done
-    ├── app.routes.ts                    ✅ done
-    │
-    ├── core/                            — singleton services, used app-wide
-    │   ├── models/
-    │   │   └── index.ts                 ✅ done (all interfaces & types)
-    │   ├── services/
-    │   │   ├── auth.service.ts          ✅ done
-    │   │   ├── baggage-request.service.ts   ⬜ to build
-    │   │   ├── trip.service.ts              ⬜ to build
-    │   │   ├── offer.service.ts             ⬜ to build
-    │   │   ├── message.service.ts           ⬜ to build
-    │   │   └── rating.service.ts            ⬜ to build
-    │   ├── guards/
-    │   │   └── auth.guard.ts            ✅ done
-    │   └── interceptors/
-    │       └── auth.interceptor.ts      ✅ done
-    │
-    ├── shared/                          — reusable components used across features
-    │   └── components/
-    │       ├── navbar/                      ⬜ (landing page navbar)
-    │       ├── avatar/                      ⬜ (user avatar with initials)
-    │       ├── rating-stars/                ⬜ (star display/input)
-    │       ├── status-badge/                ⬜ (request/trip status chip)
-    │       └── confirm-dialog/              ⬜ (reusable modal)
-    │
-    └── features/                        — one folder per page/feature area
-        │
-        ├── landing/                         ⬜ to build
-        │   └── landing.component
-        │       (.ts / .html / .scss)
-        │
-        ├── auth/                        ✅ done
-        │   ├── auth-layout.component.ts
-        │   ├── login.component.*
-        │   └── register.component.*
-        │
-        └── dashboard/
-            ├── dashboard-layout.component.*  ✅ done
-            │
-            ├── sender/
-            │   ├── sender-home.component.*           ✅ done (sender-dashboard)
-            │   ├── /my-requests
-            │   │   ├── request-list.component.*       ⬜
-            │   │   ├── request-detail.component.*     ⬜
-            │   │   └── create-request.component.*     ⬜
-            │   └── browse-trips/
-            │       └── trip-list.component.*          ⬜
-            │
-            ├── transporter/
-            │   ├── transporter-home.component.*       ⬜
-            │   ├── my-trips/
-            │   │   ├── trip-list.component.*          ⬜
-            │   │   └── create-trip.component.*        ⬜
-            │   └── browse-requests/
-            │       ├── request-list.component.*       ⬜
-            │       └── offer-form.component.*         ⬜
-            │
-            ├── messages/
-            │   └── messages.component.*               ⬜
-            │
-            ├── tracking/
-            │   └── tracking.component.*               ⬜
-            │
-            ├── ratings/
-            │   └── ratings.component.*                ⬜
-            │
-            └── settings/
-                └── settings.component.*               ⬜
+## 🤝 Contact
+For any inquiries or support, please contact the repository owner.
