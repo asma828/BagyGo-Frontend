@@ -13,11 +13,11 @@ import { ToastService, Toast, ToastType } from '../../../services/toast.service'
           class="toast toast--{{ toast.type }} animate-slide-left"
           role="alert"
         >
-          <span class="toast__icon">{{ icons[toast.type] }}</span>
+          <span class="toast__icon" [innerHTML]="icons[toast.type]"></span>
           <div class="toast__body">
-            <div class="toast__title">{{ toast.title }}</div>
+            <div class="toast__title" [innerHTML]="toast.title"></div>
             @if (toast.message) {
-              <div class="toast__message">{{ toast.message }}</div>
+              <div class="toast__message" [innerHTML]="toast.message"></div>
             }
           </div>
           <button class="toast__close" (click)="toastSvc.dismiss(toast.id)">✕</button>
@@ -33,10 +33,10 @@ import { ToastService, Toast, ToastType } from '../../../services/toast.service'
 })
 export class ToastContainerComponent {
   icons: Record<ToastType, string> = {
-    success: '✅',
-    error:   '❌',
+    success: '<i class="fa-solid fa-circle-check text-success"></i>',
+    error:   '<i class="fa-solid fa-circle-xmark text-danger"></i>',
     info:    '💬',
-    warning: '⚠️'
+    warning: '<i class="fa-solid fa-triangle-exclamation text-warning"></i>'
   };
 
   constructor(public toastSvc: ToastService) {}
