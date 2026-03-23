@@ -3,7 +3,7 @@
   <!-- ── Greeting header ── -->
   <div class="dash-header animate-fade-up">
     <div>
-      <h1 class="dash-greeting">{{ greeting() }}, {{ user?.firstName }}! 🚗</h1>
+      <h1 class="dash-greeting">{{ greeting() }}, {{ user?.firstName }}! <i class="fa-solid fa-car"></i></h1>
       <p class="dash-subtitle">Here's what's happening with your trips today.</p>
     </div>
     <a routerLink="/dashboard/transporter/trips/new" class="btn btn-primary">
@@ -21,7 +21,7 @@
   } @else {
     <div class="stats-grid animate-fade-up delay-100">
       <div class="stat-card">
-        <div class="sc-icon-wrap sc-icon-wrap--primary">🚗</div>
+        <div class="sc-icon-wrap sc-icon-wrap--primary"><i class="fa-solid fa-car"></i></div>
         <div class="sc-body">
           <div class="sc-value">{{ stats().activeTrips }}</div>
           <div class="sc-label">Active Trips</div>
@@ -29,22 +29,22 @@
         <a routerLink="/dashboard/transporter/trips" class="sc-link">View →</a>
       </div>
       <div class="stat-card">
-        <div class="sc-icon-wrap sc-icon-wrap--teal">📨</div>
+        <div class="sc-icon-wrap sc-icon-wrap--teal"><i class="fa-solid fa-envelope"></i></div>
         <div class="sc-body">
           <div class="sc-value">{{ stats().offersMade }}</div>
-          <div class="sc-label">Offers Made</div>
+          <div class="sc-label">Requests/Offers</div>
         </div>
         <a routerLink="/dashboard/transporter/requests" class="sc-link">Browse →</a>
       </div>
       <div class="stat-card">
-        <div class="sc-icon-wrap sc-icon-wrap--green">📬</div>
+        <div class="sc-icon-wrap sc-icon-wrap--green"><i class="fa-solid fa-box-open"></i></div>
         <div class="sc-body">
           <div class="sc-value">{{ stats().delivered }}</div>
           <div class="sc-label">Completed</div>
         </div>
       </div>
       <div class="stat-card">
-        <div class="sc-icon-wrap sc-icon-wrap--yellow">⭐</div>
+        <div class="sc-icon-wrap sc-icon-wrap--yellow"><i class="fa-solid fa-star"></i></div>
         <div class="sc-body">
           <div class="sc-value">{{ stats().avgRating | number:'1.1-1' }}</div>
           <div class="sc-label">Avg. Rating</div>
@@ -66,7 +66,7 @@
 
       @if (recentTrips().length === 0 && !loading()) {
         <div class="empty-inline">
-          <span>🚗</span>
+          <span><i class="fa-solid fa-car"></i></span>
           <p>No trips posted yet. <a routerLink="/dashboard/transporter/trips/new">Post your first trip →</a></p>
         </div>
       } @else {
@@ -79,9 +79,9 @@
                 <span class="trip-city">{{ trip.arrivalCity }}</span>
               </div>
               <div class="trip-meta">
-                <span>📅 {{ formatDate(trip.departureDate) }}</span>
-                <span>⚖️ {{ trip.availableSpace }} kg</span>
-                <span>💰 {{ trip.pricePerKg }} MAD/kg</span>
+                <span><i class="fa-regular fa-calendar"></i> {{ formatDate(trip.departureDate) }}</span>
+                <span><i class="fa-solid fa-weight-scale"></i> {{ trip.availableSpace }} kg</span>
+                <span><i class="fa-solid fa-sack-dollar"></i> {{ trip.pricePerKg }} MAD/kg</span>
               </div>
               <app-status-badge [status]="trip.status" size="sm" />
             </a>
@@ -90,29 +90,60 @@
       }
     </div>
 
-    <!-- Recent offers I made -->
+    <!-- Recent requests & offers -->
     <div class="dash-card">
       <div class="dash-card-header">
-        <h3>My Recent Offers</h3>
+        <h3>Requests & Offers</h3>
         <a routerLink="/dashboard/transporter/requests" class="view-all">Browse requests →</a>
       </div>
 
-      @if (recentOffers().length === 0 && !loading()) {
+      @if (recentRequests().length === 0 && !loading()) {
         <div class="empty-inline">
-          <span>📨</span>
-          <p>No offers made yet. <a routerLink="/dashboard/transporter/requests">Browse open requests →</a></p>
+          <span><i class="fa-solid fa-envelope"></i></span>
+          <p>No activity yet. <a routerLink="/dashboard/transporter/requests">Find luggage to transport →</a></p>
         </div>
       } @else {
         <div class="offers-list">
-          @for (offer of recentOffers(); track offer.id) {
+          @for (req of recentRequests(); track req.id) {
             <div class="offer-row">
-              <div class="offer-route">
-                <span>{{ offer.baggageRequest?.departureCity }}</span>
-                <span class="trip-arrow">→</span>
-                <span>{{ offer.baggageRequest?.arrivalCity }}</span>
+              <div class="offer-info">
+                <div class="offer-route">
+                  <span>{{ req.departureCity }}</span>
+                  <span class="trip-arrow">→</span>
+                  <span>{{ req.arrivalCity }}</span>
+                </div>
+                <div class="offer-sender">Sender: {{ req.sender.firstName }}</div>
+                <div class="offer-type">
+                  <small>{{ req.isDedicatedTrip ? 'Offer you made (Dedicated)' : 'Request received for trip' }}</small>
+                </div>
               </div>
-              <span class="offer-price">{{ offer.proposedPrice }} MAD</span>
-              <app-status-badge [status]="offer.status" size="sm" />
+                <div class="offer-status-actions">
+                  <span class="offer-price">{{ req.proposedPrice || ((req.trip?.pricePerKg ?? 0) * (req.weightKg ?? 0)) }} MAD</span>
+                  <app-status-badge [status]="req.status" size="sm" />
+                  
+                  <!-- Flow A: Transporter accepts request received for their trip -->
+                  @if (req.status === 'PENDING' && !req.isDedicatedTrip) {
+                    <div class="offer-actions">
+                      <button (click)="onAcceptRequest(req)" class="btn-icon btn-icon--success" title="Accept"><i class="fa-solid fa-circle-check text-success"></i></button>
+                      <button (click)="onDeclineRequest(req)" class="btn-icon btn-icon--danger" title="Decline"><i class="fa-solid fa-circle-xmark text-danger"></i></button>
+                    </div>
+                  }
+
+                  <!-- Post-acceptance actions -->
+                  @if (req.status === 'ACCEPTED') {
+                    @if (req.isPaid) {
+                      <button class="btn btn-primary btn-sm mt-3" (click)="updateRequestStatus(req.id, 'IN_TRANSIT')">
+                        <i class="fa-solid fa-truck-fast"></i> Start Delivery
+                      </button>
+                    } @else {
+                      <small class="text-muted">Wait for payment</small>
+                    }
+                  } @else if (req.status === 'IN_TRANSIT') {
+                    <button class="btn btn-success btn-sm mt-3" (click)="updateRequestStatus(req.id, 'DELIVERED')">
+                      <i class="fa-solid fa-box-open"></i> Mark Delivered
+                    </button>
+                  }
+                </div>
             </div>
           }
         </div>
@@ -128,8 +159,7 @@
       @for (action of quickActions; track action.label) {
         <a [routerLink]="action.route" class="qa-card">
           <div class="qa-icon" [style.background]="action.color + '22'"
-               [style.color]="action.color">
-            {{ action.icon }}
+               [style.color]="action.color" [innerHTML]="action.icon">
           </div>
           <span class="qa-label">{{ action.label }}</span>
         </a>
