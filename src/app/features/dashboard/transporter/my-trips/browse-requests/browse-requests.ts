@@ -5,14 +5,15 @@ import { RouterLink } from '@angular/router';
 import { BaggageRequestService } from '../../../../../core/services/baggage-request.service';
 import { OfferService } from '../../../../../core/services/offer.service';
 import { ToastService } from '../../../../../core/services/toast.service';
-import { BaggageRequest } from '../../../../../core/models';
+import { BaggageRequest, Trip } from '../../../../../core/models';
+import { TripService } from '../../../../../core/services/trip.service';
 import { StatusBadgeComponent } from '../../../../../core/components/shared/status-badge/status-badge';
 import { EmptyStateComponent } from '../../../../../core/components/shared/empty-state/empty-state';
 
 const MOROCCAN_CITIES = [
-  '','Casablanca','Rabat','Marrakech','Fès','Tanger','Agadir',
-  'Meknès','Oujda','Kenitra','Tétouan','Safi','Mohammedia',
-  'Khouribga','El Jadida','Béni Mellal','Nador','Laâyoune','Settat'
+  '', 'Casablanca', 'Rabat', 'Marrakech', 'Fès', 'Tanger', 'Agadir',
+  'Meknès', 'Oujda', 'Kenitra', 'Tétouan', 'Safi', 'Mohammedia',
+  'Khouribga', 'El Jadida', 'Béni Mellal', 'Nador', 'Laâyoune', 'Settat'
 ];
 
 @Component({
@@ -23,28 +24,16 @@ const MOROCCAN_CITIES = [
   styleUrls: ['./browse-requests.scss']
 })
 export class BrowseRequestsComponent implements OnInit {
-  loading       = signal(true);
-  requests      = signal<BaggageRequest[]>([]);
-  offeringOn    = signal<number | null>(null);   // request id with open offer form
-  submitting    = signal<number | null>(null);   // request id being submitted
+  loading = signal(true);
+  requests = signal<BaggageRequest[]>([]);
+  offeringOn = signal<number | null>(null);   // request id with open offer form
+  submitting = signal<number | null>(null);   // request id being submitted
   alreadyOffered = signal<Set<number>>(new Set());
+  myTrips = signal<Trip[]>([]);
 
-  // Filters
-  filterFrom   = signal('');
-  filterTo     = signal('');
-  filterMaxKg  = signal<number | null>(null);
   cities = MOROCCAN_CITIES;
 
-  filtered = computed(() => {
-    let list = this.requests();
-    const from = this.filterFrom().toLowerCase();
-    const to   = this.filterTo().toLowerCase();
-    const maxKg = this.filterMaxKg();
-    if (from)  list = list.filter(r => r.departureCity.toLowerCase().includes(from));
-    if (to)    list = list.filter(r => r.arrivalCity.toLowerCase().includes(to));
-    if (maxKg) list = list.filter(r => r.weightKg <= maxKg);
-    return list;
-  });
+  filtered = computed(() => this.requests());
 
   // Offer forms keyed by request id
   offerForms = new Map<number, FormGroup>();
@@ -52,14 +41,15 @@ export class BrowseRequestsComponent implements OnInit {
   constructor(
     private requestSvc: BaggageRequestService,
     private offerSvc: OfferService,
+    private tripSvc: TripService,
     private toast: ToastService,
     private fb: FormBuilder
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.requestSvc.getOpen().subscribe({
       next: (data) => { this.requests.set(data); this.loading.set(false); },
-      error: ()    => { this.toast.error('Failed to load requests'); this.loading.set(false); }
+      error: () => { this.toast.error('Failed to load requests'); this.loading.set(false); }
     });
 
     // Load my offers to track which requests I already offered on
@@ -69,13 +59,20 @@ export class BrowseRequestsComponent implements OnInit {
         this.alreadyOffered.set(ids);
       }
     });
+
+    // Load my trips to select one when making an offer
+    this.tripSvc.getMine().subscribe({
+      next: (trips) => this.myTrips.set(trips.filter(t => t.status === 'OPEN'))
+    });
   }
 
   getForm(requestId: number): FormGroup {
     if (!this.offerForms.has(requestId)) {
       this.offerForms.set(requestId, this.fb.group({
+        departureDate: [null, Validators.required],
+        estimatedArrival: [null, Validators.required],
         proposedPrice: [null, [Validators.required, Validators.min(1)]],
-        message:       ['', Validators.maxLength(200)]
+        message: ['', Validators.maxLength(200)]
       }));
     }
     return this.offerForms.get(requestId)!;
@@ -89,33 +86,37 @@ export class BrowseRequestsComponent implements OnInit {
     const form = this.getForm(request.id);
     if (form.invalid) { form.markAllAsTouched(); return; }
 
+    const val = form.value;
     this.submitting.set(request.id);
-    this.offerSvc.create({
-      baggageRequestId: request.id,
-      proposedPrice:    form.value.proposedPrice,
-      message:          form.value.message || undefined
+
+    this.requestSvc.respond(request.id, {
+      departureDate: val.departureDate,
+      estimatedArrival: val.estimatedArrival,
+      pricePerKg: val.proposedPrice,
+      notes: val.message
     }).subscribe({
-      next: () => {
-        this.alreadyOffered.update(s => new Set([...s, request.id]));
-        this.offeringOn.set(null);
-        this.submitting.set(null);
-        this.toast.success('Offer sent! ', `Your offer for ${request.departureCity} → ${request.arrivalCity} was submitted.`);
-      },
-      error: (err) => {
-        this.submitting.set(null);
-        this.toast.error('Could not send offer', err.error?.message ?? 'Please try again.');
-      }
+      next: () => this.handleSuccess(request),
+      error: (err) => this.handleError(err, request.id)
     });
   }
 
+  private handleSuccess(request: BaggageRequest) {
+    this.alreadyOffered.update(s => new Set([...s, request.id]));
+    this.offeringOn.set(null);
+    this.submitting.set(null);
+    this.toast.success('Response sent! ', `Your response for ${request.departureCity} → ${request.arrivalCity} was submitted.`);
+  }
+
+  private handleError(err: any, requestId: number) {
+    this.submitting.set(null);
+    this.toast.error('Could not send response', err.error?.message ?? 'Please try again.');
+  }
+
   clearFilters() {
-    this.filterFrom.set('');
-    this.filterTo.set('');
-    this.filterMaxKg.set(null);
   }
 
   hasActiveFilters(): boolean {
-    return !!(this.filterFrom() || this.filterTo() || this.filterMaxKg());
+    return false;
   }
 
   formatDate(date: string): string {
