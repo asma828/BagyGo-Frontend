@@ -32,4 +32,23 @@ export class TripService {
   cancel(id: number) {
     return this.http.patch<Trip>(`${this.API}/${id}/cancel`, {});
   }
+  
+  /** GET /api/trips/search — search for trips */
+  searchTrips(params: { departureCity: string, arrivalCity: string, date: string, weight: number }) {
+    return this.http.get<Trip[]>(`${this.API}/search`, { params });
+  }
+
+  /** PUT /api/trips/:id/location — transporter updates their coordinates */
+  updateLocation(id: number, lat: number, lng: number) {
+    return this.http.put<Trip>(`${this.API}/${id}/location`, null, {
+      params: { lat: lat.toString(), lng: lng.toString() }
+    });
+  }
+
+  /** PATCH /api/trips/:id/status — update trip status (OPEN -> IN_PROGRESS -> COMPLETED) */
+  updateStatus(id: number, status: string) {
+    return this.http.patch<Trip>(`${this.API}/${id}/status`, null, {
+      params: { status }
+    });
+  }
 }
