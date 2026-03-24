@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { BrowseRequests } from './browse-requests';
+import { BrowseRequestsComponent } from './browse-requests';
 
-describe('BrowseRequests', () => {
-  let component: BrowseRequests;
-  let fixture: ComponentFixture<BrowseRequests>;
+describe('BrowseRequestsComponent', () => {
+  let component: BrowseRequestsComponent;
+  let fixture: ComponentFixture<BrowseRequestsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BrowseRequests]
+      imports: [BrowseRequestsComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(BrowseRequests);
+    fixture = TestBed.createComponent(BrowseRequestsComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

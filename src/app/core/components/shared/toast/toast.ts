@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+export type { Toast, ToastType } from '../../../services/toast.service';
 import { ToastService, Toast, ToastType } from '../../../services/toast.service';
 
 @Component({
