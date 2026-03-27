@@ -74,13 +74,30 @@ ng serve
 ```
 Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
+
 ---
 
-## 🧪 Testing
+## 🐳 Docker Deployment
 
-To run unit tests with Vitest:
+You can serve the frontend in a containerized production-ready environment.
+
+### 1. Build the Docker Image
 ```bash
-ng test
+docker build -t bagygo-frontend .
+```
+
+### 2. Run the Container
+```bash
+docker run -d -p 4200:80 --name bagygo-frontend-app bagygo-frontend
+```
+- The app will be available at `http://localhost:4200`
+- It uses **Nginx** for high-performance static file serving.
+- Custom routing is configured to support Angular deep-links (refreshing a sub-page won't 404).
+
+### 3. Stop & Remove
+```bash
+docker stop bagygo-frontend-app
+docker rm bagygo-frontend-app
 ```
 
 ---
